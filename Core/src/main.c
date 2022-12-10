@@ -26,6 +26,8 @@ int main(void)
 
    /* Configure the system clock */
    SystemClock_Config();
+   SysTick_Config(SystemCoreClock / 1000);
+   LL_SYSTICK_EnableIT();
 
    /* Initialize all configured peripherals */
    MX_GPIO_Init();
@@ -101,9 +103,6 @@ void Error_Handler(void)
  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-   /* USER CODE BEGIN 6 */
-   /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-   /* USER CODE END 6 */
+   //printf("Wrong parameters value: file %s on line %ld\r\n", file, line);
 }
 #endif /* USE_FULL_ASSERT */
