@@ -5,3 +5,6 @@ How to unlock memory protection
    > flash probe 0
    > reset init
    > stm32f1x unlock 0
+
+linkermap
+   linkermap TARGET.map
