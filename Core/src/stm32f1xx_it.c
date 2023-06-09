@@ -18,9 +18,12 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "../inc/stm32f1xx_it.h"
+#include <stm32f1xx_it.h>
+#include <stm32f1xx_ll_rtc.h>
+#include <stm32f1xx_ll_tim.h>
 
-#include "../inc/main.h"
+
+#include <main.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -58,7 +61,7 @@
 /* External variables --------------------------------------------------------*/
 
 /* USER CODE BEGIN EV */
-
+   extern volatile uint32_t SysTickValue;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -184,12 +187,45 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+   SysTickValue++;
   /* USER CODE END SysTick_IRQn 0 */
 
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
+}
+
+void TIM2_IRQHandler(void)
+{
+  if(LL_TIM_IsActiveFlag_CC1(TIM2) == 1)  /* Check whether CC1 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC1(TIM2);    /* Clear the update interrupt flag*/
+  }
+  if(LL_TIM_IsActiveFlag_CC2(TIM2) == 1)  /* Check whether CC2 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC2(TIM2);    /* Clear the update interrupt flag*/
+  }
+  if(LL_TIM_IsActiveFlag_CC3(TIM2) == 1)  /* Check whether CC3 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC3(TIM2);    /* Clear the update interrupt flag*/
+  }
+  if(LL_TIM_IsActiveFlag_CC4(TIM2) == 1)  /* Check whether CC4 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC4(TIM2);    /* Clear the update interrupt flag*/
+  }
+
+}
+
+void TIM3_IRQHandler(void)
+{
+  if(LL_TIM_IsActiveFlag_CC1(TIM3) == 1)  /* Check whether CC1 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC1(TIM3);    /* Clear the update interrupt flag*/
+  }
+  if(LL_TIM_IsActiveFlag_CC2(TIM3) == 1)  /* Check whether CC2 interrupt is pending */
+  {
+    LL_TIM_ClearFlag_CC2(TIM3);    /* Clear the update interrupt flag*/
+  }
 }
 
 /******************************************************************************/

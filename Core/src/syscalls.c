@@ -30,6 +30,9 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
+#include <stm32f1xx_ll_usart.h>
+#include <rtc.h>
+
 
 /* Variables */
 extern int __io_putchar(int ch) __attribute__((weak));
@@ -79,14 +82,30 @@ return len;
 
 __attribute__((weak)) int _write(int file, char *ptr, int len)
 {
-   (void)file;
-	int DataIdx;
+   (void)(file);
+   int DataIdx;
+   uint8_t tab[13];
+   uint8_t i = 0;
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		__io_putchar(*ptr++);
-	}
-	return len;
+   Get_RTC_Time(tab);
+
+   for (i = 0; i < sizeof(tab); i++)
+   {
+      if (tab[i] == '\0')
+      {
+         break;
+      }
+      printf("%c", tab[i]);
+   }
+   printf(" ");
+
+   for (DataIdx = 0; DataIdx < len; DataIdx++)
+   {
+      LL_USART_TransmitData8(USART1, *ptr++);
+      while(!LL_USART_IsActiveFlag_TC(USART1));
+      //__io_putchar(*ptr++);
+   }
+   return len;
 }
 
 int _close(int file)

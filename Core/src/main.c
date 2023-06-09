@@ -1,7 +1,27 @@
+#include <stdio.h>
+
 #include <main.h>
+
+#include <cc1101.h>
+#include <delay.h>
 #include <gpio.h>
+#include <nrf.h>
+#include <pwm.h>
+#include <si4432.h>
+#include <spi.h>
+#include <uart.h>
+#include <rtc.h>
 
 #include <stm32f1xx_ll_gpio.h>
+#include <stm32f1xx_ll_spi.h>
+
+#define CC1101_TX
+
+#if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX) && !defined(NRF24_TX) && !defined(NRF24_RX)
+   #error Please define hardware variant!
+#endif
+
+uint8_t address[] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
 
 void SystemClock_Config(void);
 
@@ -31,14 +51,84 @@ int main(void)
 
    /* Initialize all configured peripherals */
    MX_GPIO_Init();
+   //PWM_Init();
+   UART_Init();
+   SPI_Init();
+   RTC_Init();
 
-   uint32_t i = 0;
+#if defined(CC1101_TX)
+   printf ("CC1101 Tx\n");
+   CC1101_Init(0x01);
+#endif
+
+#if defined(CC1101_RX)
+   printf ("CC1101\n");
+   CC1101_Init(0x03);
+#endif
+
+#ifdef defined(SI4432_TX) || defined(SI4432_RX)
+   printf ("SI4432\n");
+   SI4432_Init();
+   SI4432_RxMode();
+#endif
+
+#ifdef defined(NRF24_TX) || defined(NRF24_RX)
+   printf ("nRF24\n");
+   nRF24_Init();
+   NRF24_TxMode(address, 101);
+   NRF24_RxMode(address, 101);
+   uint8_t data[32];
+#endif
+
+
    while (1)
    {
-      LL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-      for(i = 0; i < 100000; i++);
-      i=0;
 
+#ifdef CC1101_TX
+      CC1101_Check_State();
+      CC1101_Tx_Debug();
+#endif
+
+#ifdef CC1101_RX
+      CC1101_Check_State();
+      CC1101_Rx_Debug();
+#endif
+
+#ifdef SI4432_TX
+      SI4432_Tx_Debug();
+      TS_Delay_ms(500);
+#endif
+
+#ifdef SI4432_RX
+      SI4432_Rx_Debug();
+#endif
+
+#ifdef NRF24_TX
+      NRF_Debug();
+      if (nRF24_Tx_Debug() == 1)
+      {
+         LL_GPIO_TogglePin(LED_Port, LED_Pin);
+      }
+      TS_Delay_ms(100);
+#endif
+
+#ifdef NRF24_RX
+      if (1 == nRF24_isDataAvailable(0))
+      {
+         nRF24_Rx_Debug(data);
+         LL_GPIO_TogglePin(LED_Port, LED_Pin);
+      }
+#endif
+
+
+//      LL_GPIO_ResetOutputPin(LED_Port, LED_Pin);
+//      TS_Delay_ms(500);
+//      LL_GPIO_SetOutputPin(LED_Port, LED_Pin);
+//      TS_Delay_ms(500);
+
+      //PWM_Update();
+      LL_GPIO_TogglePin(LED_Port, LED_Pin);
+      TS_Delay_ms(500);
    }
 }
 
