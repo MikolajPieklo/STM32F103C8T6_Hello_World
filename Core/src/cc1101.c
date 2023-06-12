@@ -74,7 +74,7 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_SYNC1,    0x57); //Sync Word, High Byte
    cc1101_writereg(CC1101_R_SYNC0,    0x43); //Sync Word, Low Byte
    cc1101_writereg(CC1101_R_PKTLEN,   0x3E); //Packet Length
-   cc1101_writereg(CC1101_R_PKTCTRL1, /*..0x0E*/0x00); //Packet Automation Control
+   cc1101_writereg(CC1101_R_PKTCTRL1, 0x04/*..0x0E*//*0x00*/); //Packet Automation Control
    cc1101_writereg(CC1101_R_PKTCTRL0, 0x45); //Packet Automation Control
    cc1101_writereg(CC1101_R_ADDR,     addr); //Device Address
    cc1101_writereg(CC1101_R_CHANNR,   0x01); //Channel Number
@@ -119,7 +119,7 @@ void CC1101_Init(uint8_t addr)
    cc1101_writeburstreg(CC1101_C_PATABLE, PA, PA_LEN);
    cc1101_setISM();
    cc1101_setChannel();
-   cc1101_setOutputPower(-30);
+   cc1101_setOutputPower(0);
 
    CC1101_Check_State();
 
