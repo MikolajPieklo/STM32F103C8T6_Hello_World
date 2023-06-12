@@ -74,7 +74,7 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_SYNC1,    0x57); //Sync Word, High Byte
    cc1101_writereg(CC1101_R_SYNC0,    0x43); //Sync Word, Low Byte
    cc1101_writereg(CC1101_R_PKTLEN,   0x3E); //Packet Length
-   cc1101_writereg(CC1101_R_PKTCTRL1, 0x04/*..0x0E*//*0x00*/); //Packet Automation Control
+   cc1101_writereg(CC1101_R_PKTCTRL1, 0x06); //Packet Automation Control
    cc1101_writereg(CC1101_R_PKTCTRL0, 0x45); //Packet Automation Control
    cc1101_writereg(CC1101_R_ADDR,     addr); //Device Address
    cc1101_writereg(CC1101_R_CHANNR,   0x01); //Channel Number
@@ -115,7 +115,6 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_TEST1,    0x3F); //Various Test Settings
    cc1101_writereg(CC1101_R_TEST0,    0x0B); //Various Test Settings
 
-   //rf_set_carrier_frequency(433.98);
    cc1101_writeburstreg(CC1101_C_PATABLE, PA, PA_LEN);
    cc1101_setISM();
    cc1101_setChannel();
@@ -264,15 +263,17 @@ uint8_t CC1101_Tx_Debug(void)
 
    if(counter%10 == 0)
    {
-      uint8_t txdata[] = "HelloWorld";
+      uint8_t txdata[] = "   HelloWorld";
+      txdata[0] = strlen(txdata);
+      txdata[1] = 0x03;
+      txdata[2] = 0x00;
 
       CC1101_Check_State();
 
       cc1101_strobe(CC1101_C_SIDLE);
       while (CC1101_STATE_IDLE != cc1101_readreg(CC1101_R_MARCSTATE));
 
-      cc1101_writereg(CC1101_R_TX_FIFO, strlen(txdata));
-      cc1101_writeburstreg(CC1101_R_TX_FIFO, txdata, strlen(txdata)); // Write TX data
+      cc1101_writeburstreg(CC1101_R_TX_FIFO, txdata, 14); // Write TX data
 
       cc1101_strobe(CC1101_C_STX);                      // Change state to TX, initiating
       CC1101_Check_State();
@@ -286,8 +287,6 @@ uint8_t CC1101_Tx_Debug(void)
 
    }
    counter++;
-//   cc1101_gdo2_int_disable();
-//   cc1101_gdo2_int_enable();
    return 1;
 }
 
