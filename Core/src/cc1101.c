@@ -23,6 +23,7 @@
 
 #define TXPower 0xC0
 #define ChannelRF 0x01
+#define RSSI_OFFSET 74
 
 #define CRYSTAL_FREQUENCY 26000
 #define CRYSTAL_FREQUENCY_M CRYSTAL_FREQUENCY/1000
@@ -35,7 +36,13 @@ static uint8_t cc1101_writereg(uint8_t reg, uint8_t value);
 static uint8_t cc1101_writeburstreg(uint8_t reg, uint8_t *data, uint8_t size);
 static uint8_t cc1101_strobe(uint8_t command);
 static uint8_t cc1101_readreg(uint8_t reg);
+static uint8_t cc1101_readburstreg(uint8_t reg, uint8_t *data, uint8_t size);
 static float   rf_set_carrier_frequency(float target_freq);
+static uint8_t cc1101_setISM(void);
+static uint8_t cc1101_setChannel(void);
+static uint8_t cc1101_setOutputPower(int8_t dBm);
+static int8_t cc1101_getRssi(void);
+static uint8_t cc1101_getLqi(void);
 
 void CC1101_Init(uint8_t addr)
 {
@@ -45,6 +52,9 @@ void CC1101_Init(uint8_t addr)
 
    uint8_t rxdata = 0;
    CC1101_Reset();
+
+   cc1101_strobe(CC1101_C_SFTX); TS_Delay_ms(100);
+   cc1101_strobe(CC1101_C_SFRX); TS_Delay_ms(100);
 
    rxdata = cc1101_readreg(CC1101_R_PARTNUM);
    printf ("PARTNUM = 0x%x\n", rxdata);
@@ -64,7 +74,7 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_SYNC1,    0x57); //Sync Word, High Byte
    cc1101_writereg(CC1101_R_SYNC0,    0x43); //Sync Word, Low Byte
    cc1101_writereg(CC1101_R_PKTLEN,   0x3E); //Packet Length
-   cc1101_writereg(CC1101_R_PKTCTRL1, 0x0E/*0xD8*/); //Packet Automation Control
+   cc1101_writereg(CC1101_R_PKTCTRL1, /*..0x0E*/0x00); //Packet Automation Control
    cc1101_writereg(CC1101_R_PKTCTRL0, 0x45); //Packet Automation Control
    cc1101_writereg(CC1101_R_ADDR,     addr); //Device Address
    cc1101_writereg(CC1101_R_CHANNR,   0x01); //Channel Number
@@ -80,7 +90,7 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_MDMCFG0,  0xF8); //Modem Configuration
    cc1101_writereg(CC1101_R_DEVIATN,  /*.0x47*/0x15); //Modem Deviation Setting
    cc1101_writereg(CC1101_R_MCSM2,    0x07); //Main Radio Control State Machine Configuration
-   cc1101_writereg(CC1101_R_MCSM1,    0x00); //Main Radio Control State Machine Configuration
+   cc1101_writereg(CC1101_R_MCSM1,    /*..0x0C*/ 0x00); //Main Radio Control State Machine Configuration
    cc1101_writereg(CC1101_R_MCSM0,    0x18); //Main Radio Control State Machine Configuration
    cc1101_writereg(CC1101_R_FOCCFG,   /*.0x1D*/0x16); //Frequency Offset Compensation Configuration
    cc1101_writereg(CC1101_R_BSCFG,    /*.0x1C*/0x6C); //Bit Synchronization Configuration
@@ -105,14 +115,13 @@ void CC1101_Init(uint8_t addr)
    cc1101_writereg(CC1101_R_TEST1,    0x3F); //Various Test Settings
    cc1101_writereg(CC1101_R_TEST0,    0x0B); //Various Test Settings
 
-   rf_set_carrier_frequency(433.98);
-
-   cc1101_strobe(CC1101_C_SFTX); TS_Delay_ms(100);
-   cc1101_strobe(CC1101_C_SFRX); TS_Delay_ms(100);
+   //rf_set_carrier_frequency(433.98);
+   cc1101_writeburstreg(CC1101_C_PATABLE, PA, PA_LEN);
+   cc1101_setISM();
+   cc1101_setChannel();
+   cc1101_setOutputPower(-30);
 
    CC1101_Check_State();
-
-   cc1101_writeburstreg(CC1101_C_PATABLE, PA, PA_LEN);
 
    cc1101_strobe(CC1101_C_SRX);
    CC1101_Check_State();
@@ -262,8 +271,8 @@ uint8_t CC1101_Tx_Debug(void)
       cc1101_strobe(CC1101_C_SIDLE);
       while (CC1101_STATE_IDLE != cc1101_readreg(CC1101_R_MARCSTATE));
 
-      cc1101_writereg(CC1101_TX_FIFO_SINGL, strlen(txdata));
-      cc1101_writeburstreg(CC1101_TX_FIFO_BURST, txdata, strlen(txdata)); // Write TX data
+      cc1101_writereg(CC1101_R_TX_FIFO, strlen(txdata));
+      cc1101_writeburstreg(CC1101_R_TX_FIFO, txdata, strlen(txdata)); // Write TX data
 
       cc1101_strobe(CC1101_C_STX);                      // Change state to TX, initiating
       CC1101_Check_State();
@@ -284,14 +293,41 @@ uint8_t CC1101_Tx_Debug(void)
 
 uint8_t CC1101_Rx_Debug(void)
 {
+   uint32_t GDO2_Pin = 0;
+   uint8_t bytes_in_rxfifo = 0;
+   uint8_t rxFifo[50];
+   uint8_t i = 0;
+
    if(CC1101_STATE_RX_END == cc1101_readreg(CC1101_R_MARCSTATE))
    {
       printf("Message is recived\n");
    }
 
-   printf("Pin: 0x%x\n", (LL_GPIO_ReadInputPort(GPIOB)&0x40));
+   GDO2_Pin = (LL_GPIO_ReadInputPort(GPIOB) & 0x40);
 
+   if (GDO2_Pin != 0)
+   {
 
+      bytes_in_rxfifo = cc1101_readreg(CC1101_R_RXBYTES);
+      printf("RxFifo 0x%x\n", bytes_in_rxfifo);
+
+      cc1101_readburstreg(CC1101_R_RX_FIFO, rxFifo, bytes_in_rxfifo);
+
+      for (i = 0; i < bytes_in_rxfifo ; i++)
+      {
+         printf("%x ", rxFifo[i]);
+      }
+      printf("\n");
+
+      printf("LQI: 0x%x\n",cc1101_getLqi());
+      printf("RSSI: %d\n",cc1101_getRssi());
+
+      cc1101_strobe(CC1101_C_SRX);
+      CC1101_Check_State();
+      while (CC1101_STATE_STARTCAL == cc1101_readreg(CC1101_R_MARCSTATE));
+      CC1101_Check_State();
+      while (CC1101_STATE_RX != cc1101_readreg(CC1101_R_MARCSTATE));
+   }
    return 0;
 }
 
@@ -374,6 +410,17 @@ static uint8_t cc1101_readreg(uint8_t reg)
    return rxdata[1];
 }
 
+static uint8_t cc1101_readburstreg(uint8_t reg, uint8_t *data, uint8_t size)
+{
+   uint8_t reg2 = reg | CC1101_READ_BURST;
+
+   cc1101_spi_cs_low();
+   spi_write(&reg2, data, 1);
+   spi_write(0xFF, data, size);
+   cc1101_spi_cs_high();
+   return data[0];
+}
+
 float rf_set_carrier_frequency(float target_freq)
 {
    /* Note that this functions depends on the value of CRYSTAL_FREQUENCY_M.
@@ -391,4 +438,69 @@ float rf_set_carrier_frequency(float target_freq)
 
    return t;
 }
+static uint8_t cc1101_setISM(void)
+{
+   uint8_t freq2=0x10;
+   uint8_t freq1=0xB0;
+   uint8_t freq0=0x71;
 
+   cc1101_writereg(CC1101_R_FREQ2, freq2);
+   cc1101_writereg(CC1101_R_FREQ1, freq1);
+   cc1101_writereg(CC1101_R_FREQ0, freq0);
+}
+
+static uint8_t cc1101_setChannel(void)
+{
+   cc1101_writereg(CC1101_R_CHANNR, 0x01);
+   return 0;
+}
+
+static uint8_t cc1101_setOutputPower(int8_t dBm)
+{
+   uint8_t pa = 0x04;
+   if (dBm <= -30)
+      pa = 0x00;
+   else if (dBm <= -20)
+      pa = 0x01;
+   else if (dBm <= -15)
+      pa = 0x02;
+   else if (dBm <= -10)
+      pa = 0x03;
+   else if (dBm <= 0)
+      pa = 0x04;
+   else if (dBm <= 5)
+      pa = 0x05;
+   else if (dBm <= 7)
+      pa = 0x06;
+   else if (dBm <= 10)
+      pa = 0x07;
+
+   cc1101_writereg(CC1101_R_FREND0, pa);
+   return 0;
+}
+
+static int8_t cc1101_getRssi(void)
+{
+   uint8_t rxData = 0;
+   int8_t rssi_dbm = 0;
+   int16_t Rssi_dec = 0;
+   cc1101_readburstreg(CC1101_R_RSSI, &rxData, 1);
+   Rssi_dec = rxData;
+
+   if(Rssi_dec >= 128)
+   {
+       rssi_dbm = ((Rssi_dec-256)/2)-RSSI_OFFSET;
+   }
+   else
+   {
+       rssi_dbm = ((Rssi_dec)/2)-RSSI_OFFSET;
+   }
+   return rssi_dbm;
+}
+
+static uint8_t cc1101_getLqi(void)
+{
+   uint8_t rxData = 0;
+   cc1101_readburstreg(CC1101_R_LQI, &rxData, 1);
+   return rxData;
+}

@@ -15,7 +15,7 @@
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
 
-#define CC1101_TX
+#define CC1101_RX
 
 #if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX) && !defined(NRF24_TX) && !defined(NRF24_RX)
    #error Please define hardware variant!
@@ -58,7 +58,7 @@ int main(void)
 
 #if defined(CC1101_TX)
    printf ("CC1101 Tx\n");
-   CC1101_Init(0x01);
+   CC1101_Init(0x00);
 #endif
 
 #if defined(CC1101_RX)

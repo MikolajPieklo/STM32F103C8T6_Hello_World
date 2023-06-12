@@ -150,11 +150,6 @@ extern "C" {
 #define CC1101_BYTES_IN_RXFIFO   0x7F
 #define CC1101_CRC_OK            0x80
 
-#define CC1101_TX_FIFO_SINGL     0x3F
-#define CC1101_TX_FIFO_BURST     0x7F
-#define CC1101_RX_FIFO_SINGL     0xBF
-#define CC1101_RX_FIFO_BURST     0xFF
-
 #define CC1101_R_IOCFG2         0x00  //GDO2 output pin configuration
 #define CC1101_R_IOCFG1         0x01  //GDO1 output pin configuration
 #define CC1101_R_IOCFG0         0x02  //GDO0 output pin configuration
@@ -221,6 +216,7 @@ extern "C" {
 
 #define CC1101_R_PATABLE        0x3E
 #define CC1101_R_TX_FIFO        0x3F
+#define CC1101_R_RX_FIFO        0x3F
 
 // Commands
 #define CC1101_C_SRES      0x30
@@ -238,7 +234,6 @@ extern "C" {
 #define CC1101_C_SNOP      0x3D
 #define CC1101_C_PATABLE   0x3E
 #define CC1101_C_TX_FIFO   0x3F
-
 
 #ifdef __cplusplus
 }
