@@ -7,7 +7,11 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef enum MARC_STATE
+#define CC1101_TX_ADDRESS 0x01
+#define CC1101_RX_ADDRESS 0x03
+#define CC1101_BR_ADDRESS 0x00  /* Broadcast address */
+
+typedef enum CC1101_Marc_State_Tag
 {
    CC1101_STATE_SLEEP            = 0x00,  /* SLEEP */
    CC1101_STATE_IDLE             = 0x01,  /* IDLE */
@@ -33,18 +37,18 @@ typedef enum MARC_STATE
    CC1101_STATE_RXTX_SWITCH      = 0x15,  /* RXTX_SETTLING */
    CC1101_STATE_TXFIFO_UNDERFLOW = 0x16,   /* TXFIFO_UNDERFLOW */
    CC1101_STATE_UNKNOW           = 0x17
-} MARC_STATE_t;
+} CC1101_Marc_State_T;
 
 void CC1101_Init(uint8_t addr);
 void CC1101_Reset(void);
-MARC_STATE_t CC1101_Check_State(void);
+CC1101_Marc_State_T CC1101_Check_State(void);
 void CC1101_Debug(void);
 uint8_t CC1101_Tx_Debug(void);
 uint8_t CC1101_Rx_Debug(void);
 
-uint8_t CC1101_isDataAvailable(uint8_t pipenum);
-void CC1101_TxMode(uint8_t *address, uint8_t channel);
-void CC1101_RxMode(uint8_t *address, uint8_t channel);
+uint8_t CC1101_Check_Available_Data(uint8_t pipenum);
+void CC1101_Tx_Mode(uint8_t *address, uint8_t channel);
+void CC1101_Rx_Mode(uint8_t *address, uint8_t channel);
 
 
 #ifdef __cplusplus

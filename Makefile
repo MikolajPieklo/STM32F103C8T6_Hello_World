@@ -32,7 +32,7 @@ CFLAGS := \
 	-fstack-usage \
 	-MMD \
 	-Wfatal-errors \
-	-Werror=implicit 
+	-Werror=implicit
 
 LDFLAGS := \
 	-mcpu=$(MACH) \
@@ -53,7 +53,7 @@ INC := \
 	-ICore/inc/ \
 	-IDrivers/STM32F1xx_HAL_Driver/inc/ \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
-	-IDrivers/CMSIS/Include/ 
+	-IDrivers/CMSIS/Include/
 
 .PHONY: all clean doc load DIR ELF HEX restart reset
 

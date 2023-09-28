@@ -58,12 +58,12 @@ int main(void)
 
 #if defined(CC1101_TX)
    printf ("CC1101 Tx\n");
-   CC1101_Init(0x00);
+   CC1101_Init(CC1101_TX_ADDRESS);
 #endif
 
 #if defined(CC1101_RX)
    printf ("CC1101\n");
-   CC1101_Init(0x03);
+   CC1101_Init(CC1101_RX_ADDRESS);
 #endif
 
 #ifdef defined(SI4432_TX) || defined(SI4432_RX)

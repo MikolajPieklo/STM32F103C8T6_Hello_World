@@ -32,17 +32,17 @@ static void    cc1101_spi_cs_low(void);
 static void    cc1101_spi_cs_high(void);
 static uint8_t spi_write(uint8_t *txdata, uint8_t *rxdata, size_t n);
 static void    spi_read(uint8_t reg, uint8_t *rxdata);
-static uint8_t cc1101_writereg(uint8_t reg, uint8_t value);
-static uint8_t cc1101_writeburstreg(uint8_t reg, uint8_t *data, uint8_t size);
+static uint8_t cc1101_write_reg(uint8_t reg, uint8_t value);
+static uint8_t cc1101_write_burst_reg(uint8_t reg, uint8_t *data, uint8_t size);
 static uint8_t cc1101_strobe(uint8_t command);
-static uint8_t cc1101_readreg(uint8_t reg);
-static uint8_t cc1101_readburstreg(uint8_t reg, uint8_t *data, uint8_t size);
+static uint8_t cc1101_read_reg(uint8_t reg);
+static uint8_t cc1101_read_burst_reg(uint8_t reg, uint8_t *data, uint8_t size);
 static float   rf_set_carrier_frequency(float target_freq);
-static uint8_t cc1101_setISM(void);
-static uint8_t cc1101_setChannel(void);
-static uint8_t cc1101_setOutputPower(int8_t dBm);
-static int8_t cc1101_getRssi(void);
-static uint8_t cc1101_getLqi(void);
+static uint8_t cc1101_set_ism(void);
+static uint8_t cc1101_set_channel(void);
+static uint8_t cc1101_set_output_power(int8_t dBm);
+static int8_t cc1101_get_rssi(void);
+static uint8_t cc1101_get_lqi(void);
 
 void CC1101_Init(uint8_t addr)
 {
@@ -56,10 +56,10 @@ void CC1101_Init(uint8_t addr)
    cc1101_strobe(CC1101_C_SFTX); TS_Delay_ms(100);
    cc1101_strobe(CC1101_C_SFRX); TS_Delay_ms(100);
 
-   rxdata = cc1101_readreg(CC1101_R_PARTNUM);
+   rxdata = cc1101_read_reg(CC1101_R_PARTNUM);
    printf ("PARTNUM = 0x%x\n", rxdata);
 
-   rxdata = cc1101_readreg(CC1101_R_VERSION);
+   rxdata = cc1101_read_reg(CC1101_R_VERSION);
    printf ("VERSION = 0x%x\n",rxdata);
 
    CC1101_Check_State();
@@ -67,66 +67,66 @@ void CC1101_Init(uint8_t addr)
    //uint8_t PA[] =  {TXPower,TXPower,TXPower,TXPower,TXPower,TXPower,TXPower,TXPower};
    uint8_t PA[] = {0x6C,0x1C,0x06,0x3A,0x51,0x85,0xC8,0xC0};
    const uint8_t PA_LEN = 8;
-   cc1101_writereg(CC1101_R_IOCFG2 ,  0x07); //GDO2 Output Pin Configuration
-   cc1101_writereg(CC1101_R_IOCFG1 ,  0x2E); //GDO1 Output Pin Configuration
-   cc1101_writereg(CC1101_R_IOCFG0 ,  0x80); //GDO0_Pin Output Pin Configuration
-   cc1101_writereg(CC1101_R_FIFOTHR,  0x07); //RX FIFO and TX FIFO Thresholds
-   cc1101_writereg(CC1101_R_SYNC1,    0x57); //Sync Word, High Byte
-   cc1101_writereg(CC1101_R_SYNC0,    0x43); //Sync Word, Low Byte
-   cc1101_writereg(CC1101_R_PKTLEN,   0x3E); //Packet Length
-   cc1101_writereg(CC1101_R_PKTCTRL1, 0x06); //Packet Automation Control
-   cc1101_writereg(CC1101_R_PKTCTRL0, 0x45); //Packet Automation Control
-   cc1101_writereg(CC1101_R_ADDR,     addr); //Device Address
-   cc1101_writereg(CC1101_R_CHANNR,   0x01); //Channel Number
-   cc1101_writereg(CC1101_R_FSCTRL1,  0x08); //Frequency Synthesizer Control
-   cc1101_writereg(CC1101_R_FSCTRL0,  0x00); //Frequency Synthesizer Control
-   cc1101_writereg(CC1101_R_FREQ2,    0x21); //Frequency Control Word, High Byte
-   cc1101_writereg(CC1101_R_FREQ1,    0x65); //Frequency Control Word, Middle Byte
-   cc1101_writereg(CC1101_R_FREQ0,    0x6A); //Frequency Control Word, Low Byte
-   cc1101_writereg(CC1101_R_MDMCFG4,  /*.0x5B*/0xF5); //Modem Configuration
-   cc1101_writereg(CC1101_R_MDMCFG3,  /*.0xF8*/0x83); //Modem Configuration
-   cc1101_writereg(CC1101_R_MDMCFG2,  0x13); //Modem Configuration
-   cc1101_writereg(CC1101_R_MDMCFG1,  0xA0/*0xC0*/); //Modem Configuration
-   cc1101_writereg(CC1101_R_MDMCFG0,  0xF8); //Modem Configuration
-   cc1101_writereg(CC1101_R_DEVIATN,  /*.0x47*/0x15); //Modem Deviation Setting
-   cc1101_writereg(CC1101_R_MCSM2,    0x07); //Main Radio Control State Machine Configuration
-   cc1101_writereg(CC1101_R_MCSM1,    /*..0x0C*/ 0x00); //Main Radio Control State Machine Configuration
-   cc1101_writereg(CC1101_R_MCSM0,    0x18); //Main Radio Control State Machine Configuration
-   cc1101_writereg(CC1101_R_FOCCFG,   /*.0x1D*/0x16); //Frequency Offset Compensation Configuration
-   cc1101_writereg(CC1101_R_BSCFG,    /*.0x1C*/0x6C); //Bit Synchronization Configuration
-   cc1101_writereg(CC1101_R_AGCTRL2,  /*.0xC7*/0x03); //AGC Control
-   cc1101_writereg(CC1101_R_AGCTRL1,  /*.0x00*/0x40); //AGC Control
-   cc1101_writereg(CC1101_R_AGCTRL0,  /*.0xB2*/0x91); //AGC Control
-   cc1101_writereg(CC1101_R_WOREVT1,  0x02); //High Byte Event0 Timeout
-   cc1101_writereg(CC1101_R_WOREVT0,  0x26); //Low Byte Event0 Timeout
-   cc1101_writereg(CC1101_R_WORCTRL,  0x09); //Wake On Radio Control
-   cc1101_writereg(CC1101_R_FREND1,   /*.0xB6*/0x56); //Front End RX Configuration
-   cc1101_writereg(CC1101_R_FREND0,   0x17); //Front End TX Configuration
-   cc1101_writereg(CC1101_R_FSCAL3,   /*.0xEA*/0xA9); //Frequency Synthesizer Calibration
-   cc1101_writereg(CC1101_R_FSCAL2,   0x0A); //Frequency Synthesizer Calibration
-   cc1101_writereg(CC1101_R_FSCAL1,   0x00); //Frequency Synthesizer Calibration
-   cc1101_writereg(CC1101_R_FSCAL0,   0x11); //Frequency Synthesizer Calibration
-   cc1101_writereg(CC1101_R_RCCTRL1,  0x41); //RC Oscillator Configuration
-   cc1101_writereg(CC1101_R_RCCTRL0,  0x00); //RC Oscillator Configuration
-   cc1101_writereg(CC1101_R_FSTEST,   0x59); //Frequency Synthesizer Calibration Control
-   cc1101_writereg(CC1101_R_PTEST,    0x7F); //Production Test
-   cc1101_writereg(CC1101_R_AGCTEST,  0x3F); //AGC Test
-   cc1101_writereg(CC1101_R_TEST2,    0x81); //Various Test Settings
-   cc1101_writereg(CC1101_R_TEST1,    0x3F); //Various Test Settings
-   cc1101_writereg(CC1101_R_TEST0,    0x0B); //Various Test Settings
+   cc1101_write_reg(CC1101_R_IOCFG2 ,  0x07); //GDO2 Output Pin Configuration
+   cc1101_write_reg(CC1101_R_IOCFG1 ,  0x2E); //GDO1 Output Pin Configuration
+   cc1101_write_reg(CC1101_R_IOCFG0 ,  0x80); //GDO0_Pin Output Pin Configuration
+   cc1101_write_reg(CC1101_R_FIFOTHR,  0x07); //RX FIFO and TX FIFO Thresholds
+   cc1101_write_reg(CC1101_R_SYNC1,    0x57); //Sync Word, High Byte
+   cc1101_write_reg(CC1101_R_SYNC0,    0x43); //Sync Word, Low Byte
+   cc1101_write_reg(CC1101_R_PKTLEN,   0x3E); //Packet Length
+   cc1101_write_reg(CC1101_R_PKTCTRL1, 0x06); //Packet Automation Control
+   cc1101_write_reg(CC1101_R_PKTCTRL0, 0x45); //Packet Automation Control
+   cc1101_write_reg(CC1101_R_ADDR,     addr); //Device Address
+   cc1101_write_reg(CC1101_R_CHANNR,   0x01); //Channel Number
+   cc1101_write_reg(CC1101_R_FSCTRL1,  0x08); //Frequency Synthesizer Control
+   cc1101_write_reg(CC1101_R_FSCTRL0,  0x00); //Frequency Synthesizer Control
+   cc1101_write_reg(CC1101_R_FREQ2,    0x21); //Frequency Control Word, High Byte
+   cc1101_write_reg(CC1101_R_FREQ1,    0x65); //Frequency Control Word, Middle Byte
+   cc1101_write_reg(CC1101_R_FREQ0,    0x6A); //Frequency Control Word, Low Byte
+   cc1101_write_reg(CC1101_R_MDMCFG4,  /*.0x5B*/0xF5); //Modem Configuration
+   cc1101_write_reg(CC1101_R_MDMCFG3,  /*.0xF8*/0x83); //Modem Configuration
+   cc1101_write_reg(CC1101_R_MDMCFG2,  0x13); //Modem Configuration
+   cc1101_write_reg(CC1101_R_MDMCFG1,  0xA0/*0xC0*/); //Modem Configuration
+   cc1101_write_reg(CC1101_R_MDMCFG0,  0xF8); //Modem Configuration
+   cc1101_write_reg(CC1101_R_DEVIATN,  /*.0x47*/0x15); //Modem Deviation Setting
+   cc1101_write_reg(CC1101_R_MCSM2,    0x07); //Main Radio Control State Machine Configuration
+   cc1101_write_reg(CC1101_R_MCSM1,    /*..0x0C*/ 0x00); //Main Radio Control State Machine Configuration
+   cc1101_write_reg(CC1101_R_MCSM0,    0x18); //Main Radio Control State Machine Configuration
+   cc1101_write_reg(CC1101_R_FOCCFG,   /*.0x1D*/0x16); //Frequency Offset Compensation Configuration
+   cc1101_write_reg(CC1101_R_BSCFG,    /*.0x1C*/0x6C); //Bit Synchronization Configuration
+   cc1101_write_reg(CC1101_R_AGCTRL2,  /*.0xC7*/0x03); //AGC Control
+   cc1101_write_reg(CC1101_R_AGCTRL1,  /*.0x00*/0x40); //AGC Control
+   cc1101_write_reg(CC1101_R_AGCTRL0,  /*.0xB2*/0x91); //AGC Control
+   cc1101_write_reg(CC1101_R_WOREVT1,  0x02); //High Byte Event0 Timeout
+   cc1101_write_reg(CC1101_R_WOREVT0,  0x26); //Low Byte Event0 Timeout
+   cc1101_write_reg(CC1101_R_WORCTRL,  0x09); //Wake On Radio Control
+   cc1101_write_reg(CC1101_R_FREND1,   /*.0xB6*/0x56); //Front End RX Configuration
+   cc1101_write_reg(CC1101_R_FREND0,   0x17); //Front End TX Configuration
+   cc1101_write_reg(CC1101_R_FSCAL3,   /*.0xEA*/0xA9); //Frequency Synthesizer Calibration
+   cc1101_write_reg(CC1101_R_FSCAL2,   0x0A); //Frequency Synthesizer Calibration
+   cc1101_write_reg(CC1101_R_FSCAL1,   0x00); //Frequency Synthesizer Calibration
+   cc1101_write_reg(CC1101_R_FSCAL0,   0x11); //Frequency Synthesizer Calibration
+   cc1101_write_reg(CC1101_R_RCCTRL1,  0x41); //RC Oscillator Configuration
+   cc1101_write_reg(CC1101_R_RCCTRL0,  0x00); //RC Oscillator Configuration
+   cc1101_write_reg(CC1101_R_FSTEST,   0x59); //Frequency Synthesizer Calibration Control
+   cc1101_write_reg(CC1101_R_PTEST,    0x7F); //Production Test
+   cc1101_write_reg(CC1101_R_AGCTEST,  0x3F); //AGC Test
+   cc1101_write_reg(CC1101_R_TEST2,    0x81); //Various Test Settings
+   cc1101_write_reg(CC1101_R_TEST1,    0x3F); //Various Test Settings
+   cc1101_write_reg(CC1101_R_TEST0,    0x0B); //Various Test Settings
 
-   cc1101_writeburstreg(CC1101_C_PATABLE, PA, PA_LEN);
-   cc1101_setISM();
-   cc1101_setChannel();
-   cc1101_setOutputPower(0);
+   cc1101_write_burst_reg(CC1101_C_PATABLE, PA, PA_LEN);
+   cc1101_set_ism();
+   cc1101_set_channel();
+   cc1101_set_output_power(0);
 
    CC1101_Check_State();
 
    cc1101_strobe(CC1101_C_SRX);
    CC1101_Check_State();
-   while (CC1101_STATE_STARTCAL == cc1101_readreg(CC1101_R_MARCSTATE));
+   while (CC1101_STATE_STARTCAL == cc1101_read_reg(CC1101_R_MARCSTATE));
    CC1101_Check_State();
-   while (CC1101_STATE_RX != cc1101_readreg(CC1101_R_MARCSTATE));
+   while (CC1101_STATE_RX != cc1101_read_reg(CC1101_R_MARCSTATE));
 }
 
 void CC1101_Reset(void)
@@ -138,7 +138,7 @@ void CC1101_Reset(void)
    {
       counter++;
    }
-   printf("counter %d\n", counter);
+   printf("counter %ld\n", counter);
 }
 
 /*
@@ -163,9 +163,9 @@ void CC1101_Reset(void)
 +------+---------------------------+---------------------------------------------------------------------------------------------------------------------+
 */
 
-MARC_STATE_t CC1101_Check_State(void)
+CC1101_Marc_State_T CC1101_Check_State(void)
 {
-   static MARC_STATE_t status = CC1101_STATE_UNKNOW;
+   static CC1101_Marc_State_T status = CC1101_STATE_UNKNOW;
    static uint8_t counter = 0;
    uint8_t data[2];
 
@@ -263,29 +263,33 @@ uint8_t CC1101_Tx_Debug(void)
 
    if(counter%10 == 0)
    {
-      uint8_t txdata[] = "   HelloWorld";
-      txdata[0] = strlen(txdata);
-      txdata[1] = 0x03;
-      txdata[2] = 0x00;
+      uint8_t txdata[] = "   HelloWorld\0";
+      uint8_t len = strlen((char*)txdata);
+
+      printf("value[0]: %d\n", txdata[0]);
+      printf("size: %d\n", strlen((char*)txdata));
+      txdata[0] = len;
+      txdata[1] = CC1101_BR_ADDRESS;
+      txdata[2] = CC1101_TX_ADDRESS;
 
       CC1101_Check_State();
 
       cc1101_strobe(CC1101_C_SIDLE);
-      while (CC1101_STATE_IDLE != cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_IDLE != cc1101_read_reg(CC1101_R_MARCSTATE));
 
-      cc1101_writeburstreg(CC1101_R_TX_FIFO, txdata, 14); // Write TX data
+      cc1101_write_burst_reg(CC1101_R_TX_FIFO, txdata, len + 1); // Write TX data
 
       cc1101_strobe(CC1101_C_STX);                      // Change state to TX, initiating
       CC1101_Check_State();
-      while (CC1101_STATE_STARTCAL == cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_STARTCAL == cc1101_read_reg(CC1101_R_MARCSTATE));
       CC1101_Check_State();
-      while (CC1101_STATE_TX == cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_TX == cc1101_read_reg(CC1101_R_MARCSTATE));
       CC1101_Check_State();
-      while (CC1101_STATE_TX_END == cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_TX_END == cc1101_read_reg(CC1101_R_MARCSTATE));
       CC1101_Check_State();
-      while (CC1101_STATE_IDLE != cc1101_readreg(CC1101_R_MARCSTATE));
-
+      while (CC1101_STATE_IDLE != cc1101_read_reg(CC1101_R_MARCSTATE));
    }
+
    counter++;
    return 1;
 }
@@ -297,7 +301,7 @@ uint8_t CC1101_Rx_Debug(void)
    uint8_t rxFifo[50];
    uint8_t i = 0;
 
-   if(CC1101_STATE_RX_END == cc1101_readreg(CC1101_R_MARCSTATE))
+   if(CC1101_STATE_RX_END == cc1101_read_reg(CC1101_R_MARCSTATE))
    {
       printf("Message is recived\n");
    }
@@ -306,11 +310,10 @@ uint8_t CC1101_Rx_Debug(void)
 
    if (GDO2_Pin != 0)
    {
+      bytes_in_rxfifo = cc1101_read_reg(CC1101_R_RXBYTES);
+      printf("Bytes in rxfifo 0x%x\n", bytes_in_rxfifo);
 
-      bytes_in_rxfifo = cc1101_readreg(CC1101_R_RXBYTES);
-      printf("RxFifo 0x%x\n", bytes_in_rxfifo);
-
-      cc1101_readburstreg(CC1101_R_RX_FIFO, rxFifo, bytes_in_rxfifo);
+      cc1101_read_burst_reg(CC1101_R_RX_FIFO, rxFifo, bytes_in_rxfifo);
 
       for (i = 0; i < bytes_in_rxfifo ; i++)
       {
@@ -318,14 +321,13 @@ uint8_t CC1101_Rx_Debug(void)
       }
       printf("\n");
 
-      printf("LQI: 0x%x\n",cc1101_getLqi());
-      printf("RSSI: %d\n",cc1101_getRssi());
+      printf("LQI: 0x%x RSSI: %d\n", cc1101_get_lqi(), cc1101_get_rssi());
 
       cc1101_strobe(CC1101_C_SRX);
       CC1101_Check_State();
-      while (CC1101_STATE_STARTCAL == cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_STARTCAL == cc1101_read_reg(CC1101_R_MARCSTATE));
       CC1101_Check_State();
-      while (CC1101_STATE_RX != cc1101_readreg(CC1101_R_MARCSTATE));
+      while (CC1101_STATE_RX != cc1101_read_reg(CC1101_R_MARCSTATE));
    }
    return 0;
 }
@@ -366,7 +368,7 @@ static void spi_read(uint8_t reg, uint8_t *rxdata)
    rxdata[1] = LL_SPI_ReceiveData8(SPI1);
 }
 
-static uint8_t cc1101_writereg(uint8_t reg, uint8_t value)
+static uint8_t cc1101_write_reg(uint8_t reg, uint8_t value)
 {
    uint8_t rxdata[2] = {0, 0};
    uint8_t txdata[2] = {CC1101_WRITE_SINGLE_BYTE | reg, value};
@@ -377,7 +379,7 @@ static uint8_t cc1101_writereg(uint8_t reg, uint8_t value)
    return rxdata[1];
 }
 
-static uint8_t cc1101_writeburstreg(uint8_t reg, uint8_t *data, uint8_t size)
+static uint8_t cc1101_write_burst_reg(uint8_t reg, uint8_t *data, uint8_t size)
 {
    uint8_t rxdata[20];
    uint8_t reg2 = reg | CC1101_WRITE_BURST;
@@ -400,7 +402,7 @@ static uint8_t cc1101_strobe(uint8_t command)
    return rxdata;
 }
 
-static uint8_t cc1101_readreg(uint8_t reg)
+static uint8_t cc1101_read_reg(uint8_t reg)
 {
    cc1101_spi_cs_low();
    uint8_t rxdata[2] = {0, 0};
@@ -409,13 +411,15 @@ static uint8_t cc1101_readreg(uint8_t reg)
    return rxdata[1];
 }
 
-static uint8_t cc1101_readburstreg(uint8_t reg, uint8_t *data, uint8_t size)
+static uint8_t cc1101_read_burst_reg(uint8_t reg, uint8_t *data, uint8_t size)
 {
    uint8_t reg2 = reg | CC1101_READ_BURST;
+   uint8_t tx_data[size];
+   memset(tx_data, 0, size);
 
    cc1101_spi_cs_low();
    spi_write(&reg2, data, 1);
-   spi_write(0xFF, data, size);
+   spi_write(tx_data, data, size);
    cc1101_spi_cs_high();
    return data[0];
 }
@@ -430,31 +434,34 @@ float rf_set_carrier_frequency(float target_freq)
    float freqf = target_freq*65536.0/(float)CRYSTAL_FREQUENCY_M;
    uint32_t freq = (uint32_t)freqf;
    freq = freq&0x00FFFFFF;
-   cc1101_writereg(CC1101_R_FREQ0, freq);
-   cc1101_writereg(CC1101_R_FREQ1, (freq>>8));
-   cc1101_writereg(CC1101_R_FREQ2, (freq>>16));
+   cc1101_write_reg(CC1101_R_FREQ0, freq);
+   cc1101_write_reg(CC1101_R_FREQ1, (freq>>8));
+   cc1101_write_reg(CC1101_R_FREQ2, (freq>>16));
    float t = ((float)freq*(float)CRYSTAL_FREQUENCY_M)/65536.0;
 
    return t;
 }
-static uint8_t cc1101_setISM(void)
+
+static uint8_t cc1101_set_ism(void)
 {
    uint8_t freq2=0x10;
    uint8_t freq1=0xB0;
    uint8_t freq0=0x71;
 
-   cc1101_writereg(CC1101_R_FREQ2, freq2);
-   cc1101_writereg(CC1101_R_FREQ1, freq1);
-   cc1101_writereg(CC1101_R_FREQ0, freq0);
-}
+   cc1101_write_reg(CC1101_R_FREQ2, freq2);
+   cc1101_write_reg(CC1101_R_FREQ1, freq1);
+   cc1101_write_reg(CC1101_R_FREQ0, freq0);
 
-static uint8_t cc1101_setChannel(void)
-{
-   cc1101_writereg(CC1101_R_CHANNR, 0x01);
    return 0;
 }
 
-static uint8_t cc1101_setOutputPower(int8_t dBm)
+static uint8_t cc1101_set_channel(void)
+{
+   cc1101_write_reg(CC1101_R_CHANNR, 0x01);
+   return 0;
+}
+
+static uint8_t cc1101_set_output_power(int8_t dBm)
 {
    uint8_t pa = 0x04;
    if (dBm <= -30)
@@ -474,16 +481,16 @@ static uint8_t cc1101_setOutputPower(int8_t dBm)
    else if (dBm <= 10)
       pa = 0x07;
 
-   cc1101_writereg(CC1101_R_FREND0, pa);
+   cc1101_write_reg(CC1101_R_FREND0, pa);
    return 0;
 }
 
-static int8_t cc1101_getRssi(void)
+static int8_t cc1101_get_rssi(void)
 {
    uint8_t rxData = 0;
    int8_t rssi_dbm = 0;
    int16_t Rssi_dec = 0;
-   cc1101_readburstreg(CC1101_R_RSSI, &rxData, 1);
+   cc1101_read_burst_reg(CC1101_R_RSSI, &rxData, 1);
    Rssi_dec = rxData;
 
    if(Rssi_dec >= 128)
@@ -497,9 +504,9 @@ static int8_t cc1101_getRssi(void)
    return rssi_dbm;
 }
 
-static uint8_t cc1101_getLqi(void)
+static uint8_t cc1101_get_lqi(void)
 {
    uint8_t rxData = 0;
-   cc1101_readburstreg(CC1101_R_LQI, &rxData, 1);
+   cc1101_read_burst_reg(CC1101_R_LQI, &rxData, 1);
    return rxData;
 }
