@@ -88,4 +88,3 @@ void SPI_Rx8(uint8_t *data, uint8_t n)
    }
    LL_GPIO_SetOutputPin(GPIOA, SPI1_NSS_Pin);
 }
-

@@ -4,6 +4,7 @@
 
 #include <cc1101.h>
 #include <delay.h>
+#include <device_info.h>
 #include <gpio.h>
 #include <nrf.h>
 #include <pwm.h>
@@ -11,6 +12,8 @@
 #include <spi.h>
 #include <uart.h>
 #include <rtc.h>
+#include <i2c.h>
+#include <sh1106.h>
 
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
@@ -55,14 +58,25 @@ int main(void)
    UART_Init();
    SPI_Init();
    RTC_Init();
+   Device_Info();
+   if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
+   {
+      printf ("I2C OK\n");
+   }
+   else
+   {
+      printf ("I2C NOK\n");
+   }
+   SH1106_Init();
+   SH1106_Send_Text(10, 0, "CPU LOAD: 12%");
 
 #if defined(CC1101_TX)
-   printf ("CC1101 Tx\n");
+   printf("CC1101 Tx\n");
    CC1101_Init(CC1101_TX_ADDRESS);
 #endif
 
 #if defined(CC1101_RX)
-   printf ("CC1101\n");
+   printf ("CC1101 Rx\n");
    CC1101_Init(CC1101_RX_ADDRESS);
 #endif
 
@@ -119,12 +133,6 @@ int main(void)
          LL_GPIO_TogglePin(LED_Port, LED_Pin);
       }
 #endif
-
-
-//      LL_GPIO_ResetOutputPin(LED_Port, LED_Pin);
-//      TS_Delay_ms(500);
-//      LL_GPIO_SetOutputPin(LED_Port, LED_Pin);
-//      TS_Delay_ms(500);
 
       //PWM_Update();
       LL_GPIO_TogglePin(LED_Port, LED_Pin);

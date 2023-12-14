@@ -66,7 +66,6 @@ void UART_Init(void)
 //   /* USER CODE END USART1_Init 0 */
 
    LL_USART_InitTypeDef USART_InitStruct = {0};
-
    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
    /* Peripheral clock enable */
@@ -103,6 +102,7 @@ void UART_Init(void)
    LL_USART_ConfigAsyncMode(USART1);
    LL_USART_Enable(USART1);
 }
+
 void UART_Tx(uint8_t *data, uint8_t n)
 {
 
