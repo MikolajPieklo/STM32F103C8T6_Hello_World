@@ -1,8 +1,8 @@
 /**
  ********************************************************************************
- * @file    device_info.c
+ * @file    circual_buffer.c
  * @author  Mikolaj Pieklo
- * @date    10.11.2023
+ * @date    15.12.2023
  * @brief
  ********************************************************************************
  */
@@ -10,11 +10,9 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <device_info.h>
-
+#include <circual_buffer.h>
 #include <stdint.h>
-#include <stdio.h>
-
+#include <string.h>
 /************************************
  * EXTERN VARIABLES
  ************************************/
@@ -22,11 +20,6 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-#define STM32_REG_FLASH_SIZE 0x1FFFF7E0U
-#define STM32_REG_DEVICE_ID_1 0x1FFFF7E8U
-#define STM32_REG_DEVICE_ID_2 0x1FFFF7EAU
-#define STM32_REG_DEVICE_ID_3 0x1FFFF7ECU
-#define STM32_REG_DEVICE_ID_4 0x1FFFF7F0U
 
 /************************************
  * PRIVATE TYPEDEFS
@@ -39,6 +32,8 @@
 /************************************
  * GLOBAL VARIABLES
  ************************************/
+volatile Circual_Buffer_T cbp = {0, 0};
+volatile uint8_t Circual_Buffer[CIRCUAL_BUFFER_SIZE];
 
 /************************************
  * STATIC FUNCTION PROTOTYPES
@@ -51,16 +46,34 @@
 /************************************
  * GLOBAL FUNCTIONS
  ************************************/
-void Device_Info(void)
+void Circual_Buffer_Insert_Char(uint8_t c)
 {
-   uint16_t *u16_info = (uint16_t *)STM32_REG_FLASH_SIZE;
-   printf("Flash size 0x%x\n", *u16_info);
-   u16_info = (uint16_t *)STM32_REG_DEVICE_ID_1;
-   printf("Device ID1 0x%x\n", *u16_info);
-   u16_info = (uint16_t *)STM32_REG_DEVICE_ID_2;
-   printf("Device ID2 0x%x\n", *u16_info);
-   uint32_t *u32_info = (uint32_t *)STM32_REG_DEVICE_ID_3;
-   printf("Device ID3 0x%lx\n", *u32_info);
-   u32_info = (uint32_t *)STM32_REG_DEVICE_ID_4;
-   printf("Device ID4 0x%lx\n", *u32_info);
+   if (cbp.head > (CIRCUAL_BUFFER_SIZE - 1))
+   {
+      cbp.head = 0;
+   }
+   Circual_Buffer[cbp.head] = c;
+   cbp.head++;
+   if (cbp.head == CIRCUAL_BUFFER_SIZE)
+   {
+      cbp.head = 0;
+   }
+}
+
+void Circual_Buffer_Insert_Text(uint8_t *text, uint32_t len)
+{
+   if ((cbp.head + len) <= (CIRCUAL_BUFFER_SIZE - 1))
+   {
+      memcpy(Circual_Buffer + cbp.head, text, len);
+      cbp.head += len;
+   } else if (cbp.head + len > (CIRCUAL_BUFFER_SIZE - 1))
+   {
+      uint32_t lenToEndLine = (CIRCUAL_BUFFER_SIZE - 1) - cbp.head;
+      memcpy(Circual_Buffer + cbp.head, text, lenToEndLine);
+      memcpy(Circual_Buffer, (text + lenToEndLine), (len - lenToEndLine));
+      cbp.head = (len - lenToEndLine);
+   } else
+   {
+      // do nothing
+   }
 }

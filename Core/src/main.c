@@ -6,22 +6,23 @@
 #include <delay.h>
 #include <device_info.h>
 #include <gpio.h>
+#include <i2c.h>
 #include <nrf.h>
 #include <pwm.h>
+#include <rtc.h>
+#include <sh1106.h>
 #include <si4432.h>
 #include <spi.h>
 #include <uart.h>
-#include <rtc.h>
-#include <i2c.h>
-#include <sh1106.h>
 
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
 
 #define CC1101_RX
 
-#if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX) && !defined(NRF24_TX) && !defined(NRF24_RX)
-   #error Please define hardware variant!
+#if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX)       \
+    && !defined(NRF24_TX) && !defined(NRF24_RX)
+#error Please define hardware variant!
 #endif
 
 uint8_t address[] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
@@ -34,7 +35,8 @@ void SystemClock_Config(void);
  */
 int main(void)
 {
-   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+   /* Reset of all peripherals, Initializes the Flash interface and the Systick.
+    */
    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
@@ -54,21 +56,21 @@ int main(void)
 
    /* Initialize all configured peripherals */
    MX_GPIO_Init();
-   //PWM_Init();
-   UART_Init();
+   // PWM_Init();
+   UART1_Init();
    SPI_Init();
    RTC_Init();
    Device_Info();
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
-      printf ("I2C OK\n");
-   }
-   else
+      printf("I2C OK\n");
+   } else
    {
-      printf ("I2C NOK\n");
+      printf("I2C NOK\n");
    }
    SH1106_Init();
-   SH1106_Send_Text(10, 0, "CPU LOAD: 12%");
+   SH1106_Send_Text(0, 0, "CPU LOAD: 12%");
+   SH1106_Send_Text(0, 14, "MEMORY USAGE: 6%");
 
 #if defined(CC1101_TX)
    printf("CC1101 Tx\n");
@@ -76,24 +78,23 @@ int main(void)
 #endif
 
 #if defined(CC1101_RX)
-   printf ("CC1101 Rx\n");
+   printf("CC1101 Rx\n");
    CC1101_Init(CC1101_RX_ADDRESS);
 #endif
 
 #ifdef defined(SI4432_TX) || defined(SI4432_RX)
-   printf ("SI4432\n");
+   printf("SI4432\n");
    SI4432_Init();
    SI4432_RxMode();
 #endif
 
 #ifdef defined(NRF24_TX) || defined(NRF24_RX)
-   printf ("nRF24\n");
+   printf("nRF24\n");
    nRF24_Init();
    NRF24_TxMode(address, 101);
    NRF24_RxMode(address, 101);
    uint8_t data[32];
 #endif
-
 
    while (1)
    {
@@ -134,7 +135,7 @@ int main(void)
       }
 #endif
 
-      //PWM_Update();
+      // PWM_Update();
       LL_GPIO_TogglePin(LED_Port, LED_Pin);
       TS_Delay_ms(500);
    }
@@ -191,7 +192,7 @@ void Error_Handler(void)
    /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
  * @brief  Reports the name of the source file and the source line number
  *         where the assert_param error has occurred.
@@ -201,6 +202,6 @@ void Error_Handler(void)
  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-   //printf("Wrong parameters value: file %s on line %ld\r\n", file, line);
+   // printf("Wrong parameters value: file %s on line %ld\r\n", file, line);
 }
 #endif /* USE_FULL_ASSERT */

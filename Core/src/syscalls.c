@@ -21,17 +21,19 @@
  */
 
 /* Includes */
-#include <sys/stat.h>
-#include <stdlib.h>
 #include <errno.h>
-#include <stdio.h>
 #include <signal.h>
-#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#include <time.h>
 
-#include <stm32f1xx_ll_usart.h>
+#include <circual_buffer.h>
 #include <rtc.h>
+#include <stm32f1xx_ll_usart.h>
+#include <string.h>
 
 
 /* Variables */
@@ -39,7 +41,7 @@ extern int __io_putchar(int ch) __attribute__((weak));
 extern int __io_getchar(void) __attribute__((weak));
 
 
-char *__env[1] = { 0 };
+char *__env[1] = {0};
 char **environ = __env;
 
 
@@ -50,140 +52,142 @@ void initialise_monitor_handles()
 
 int _getpid(void)
 {
-	return 1;
+   return 1;
 }
 
 int _kill(int pid, int sig)
 {
-   (void)pid; (void)sig;
+   (void)pid;
+   (void)sig;
 
-	errno = EINVAL;
-	return -1;
+   errno = EINVAL;
+   return -1;
 }
 
-void _exit (int status)
+void _exit(int status)
 {
-	_kill(status, -1);
-	while (1) {}		/* Make sure we hang here */
+   _kill(status, -1);
+   while (1)
+   {
+   } /* Make sure we hang here */
 }
 
 __attribute__((weak)) int _read(int file, char *ptr, int len)
 {
    (void)file;
-	int DataIdx;
+   int DataIdx;
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		*ptr++ = __io_getchar();
-	}
+   for (DataIdx = 0; DataIdx < len; DataIdx++)
+   {
+      *ptr++ = __io_getchar();
+   }
 
-return len;
+   return len;
 }
 
 __attribute__((weak)) int _write(int file, char *ptr, int len)
 {
    (void)(file);
-   int DataIdx;
-   uint8_t tab[13];
-   uint8_t i = 0;
+   uint8_t tab[14];
+   memset(tab, ' ', sizeof(tab));
 
    Get_RTC_Time(tab);
+   Circual_Buffer_Insert_Text(tab, sizeof(tab));
+   Circual_Buffer_Insert_Text(ptr, len);
 
-   for (i = 0; i < sizeof(tab); i++)
-   {
-      if (tab[i] == '\0')
-      {
-         break;
-      }
-      printf("%c", tab[i]);
-   }
-   printf(" ");
-
-   for (DataIdx = 0; DataIdx < len; DataIdx++)
-   {
-      LL_USART_TransmitData8(USART1, *ptr++);
-      while(!LL_USART_IsActiveFlag_TC(USART1));
-      //__io_putchar(*ptr++);
-   }
+   // for (DataIdx = 0; DataIdx < len; DataIdx++)
+   // {
+   //    Circual_Buffer_Insert_Char(*ptr++);
+   //    // LL_USART_TransmitData8(USART1, *ptr++);
+   //    // while(!LL_USART_IsActiveFlag_TC(USART1));
+   //    //__io_putchar(*ptr++);
+   // }
    return len;
 }
 
 int _close(int file)
 {
    (void)file;
-	return -1;
+   return -1;
 }
 
 
 int _fstat(int file, struct stat *st)
 {
    (void)file;
-	st->st_mode = S_IFCHR;
-	return 0;
+   st->st_mode = S_IFCHR;
+   return 0;
 }
 
 int _isatty(int file)
 {
    (void)file;
-	return 1;
+   return 1;
 }
 
 int _lseek(int file, int ptr, int dir)
 {
-   (void)file; (void)ptr; (void)dir;
-	return 0;
+   (void)file;
+   (void)ptr;
+   (void)dir;
+   return 0;
 }
 
 int _open(char *path, int flags, ...)
 {
-   (void)path; (void)flags;
-	/* Pretend like we always fail */
-	return -1;
+   (void)path;
+   (void)flags;
+   /* Pretend like we always fail */
+   return -1;
 }
 
 int _wait(int *status)
 {
    (void)status;
-	errno = ECHILD;
-	return -1;
+   errno = ECHILD;
+   return -1;
 }
 
 int _unlink(char *name)
 {
    (void)name;
-	errno = ENOENT;
-	return -1;
+   errno = ENOENT;
+   return -1;
 }
 
 int _times(struct tms *buf)
 {
    (void)buf;
-	return -1;
+   return -1;
 }
 
 int _stat(char *file, struct stat *st)
 {
-   (void)file; (void)st;
-	st->st_mode = S_IFCHR;
-	return 0;
+   (void)file;
+   (void)st;
+   st->st_mode = S_IFCHR;
+   return 0;
 }
 
 int _link(char *old, char *new)
 {
-   (void)old; (void)new;
-	errno = EMLINK;
-	return -1;
+   (void)old;
+   (void)new;
+   errno = EMLINK;
+   return -1;
 }
 
 int _fork(void)
 {
-	errno = EAGAIN;
-	return -1;
+   errno = EAGAIN;
+   return -1;
 }
 
 int _execve(char *name, char **argv, char **env)
 {
-   (void)name; (void)argv; (void)env;
-	errno = ENOMEM;
-	return -1;
+   (void)name;
+   (void)argv;
+   (void)env;
+   errno = ENOMEM;
+   return -1;
 }

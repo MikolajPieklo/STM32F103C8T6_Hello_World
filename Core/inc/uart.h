@@ -14,9 +14,9 @@ extern "C" {
 
 #include <stdint.h>
 
-void UART_Init(void);
-void UART_Tx(uint8_t *data, uint8_t n);
-void UART_Rx(uint8_t *data, uint8_t n);
+void UART1_Init(void);
+void UART1_Tx(uint8_t *data, uint8_t n);
+void UART1_Rx(uint8_t *data, uint8_t n);
 
 #ifdef __cplusplus
 }

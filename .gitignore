@@ -1,7 +1,8 @@
 .cproject
 .project
 .settings
-
+.vscode-ctags
+.vscode/
 out
 
 # Prerequisites
