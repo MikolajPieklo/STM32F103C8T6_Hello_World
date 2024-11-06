@@ -10,10 +10,11 @@
 /************************************
  * INCLUDES
  ************************************/
+#include <sh1106.h>
+
 #include <delay.h>
 #include <fonts.h>
 #include <i2c.h>
-#include <sh1106.h>
 
 #include <string.h>
 
@@ -207,7 +208,7 @@ void SH1106_Init(void)
    return;
 }
 
-void SH1106_Send_Text(uint8_t x, uint8_t y, const uint8_t *text)
+void SH1106_Send_Text(uint8_t x, uint8_t y, char *text)
 {
    uint8_t size = strlen((const char *)text);
    uint8_t i = 0;

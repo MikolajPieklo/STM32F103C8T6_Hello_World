@@ -17,8 +17,8 @@ extern "C" {
 /************************************
  * INCLUDES
  ************************************/
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /************************************
  * MACROS AND DEFINES
@@ -38,8 +38,7 @@ extern "C" {
 
 void SH1106_Init(void);
 
-void SH1106_Send_Text(uint8_t x, uint8_t y, const uint8_t* text);
-
+void SH1106_Send_Text(uint8_t x, uint8_t y, char *text);
 
 #ifdef __cplusplus
 }

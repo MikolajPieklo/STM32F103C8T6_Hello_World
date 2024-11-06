@@ -1,12 +1,12 @@
-#include <stdio.h>
-
 #include <main.h>
 
 #include <cc1101.h>
+#include <circual_buffer.h>
 #include <delay.h>
 #include <device_info.h>
 #include <gpio.h>
 #include <i2c.h>
+#include <lora_e32.h>
 #include <nrf.h>
 #include <pwm.h>
 #include <rtc.h>
@@ -15,17 +15,27 @@
 #include <spi.h>
 #include <uart.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
 
-#define CC1101_RX
-
 #if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX)       \
-    && !defined(NRF24_TX) && !defined(NRF24_RX)
+    && !defined(NRF24_TX) && !defined(NRF24_RX) && !defined(LORA_E32_TX) && !defined(LORA_E32_RX)
 #error Please define hardware variant!
 #endif
 
 uint8_t address[] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
+
+volatile uint32_t irq_aux_nr = 0;
+volatile uint32_t irq_uart_nr = 0;
+uint8_t irq_buff[10];
+static uint32_t old_ts_ms = 0;
+volatile CirBuff_T cb_uart1_tx = {.tail = 0,
+                                  .head = 0,
+                                  .size = CIRCUAL_BUFFER_SIZE,
+                                  .USARTx = USART1};
 
 void SystemClock_Config(void);
 
@@ -71,6 +81,9 @@ int main(void)
    SH1106_Init();
    SH1106_Send_Text(0, 0, "CPU LOAD: 12%");
    SH1106_Send_Text(0, 14, "MEMORY USAGE: 6%");
+   SH1106_Send_Text(0, 28, "IRQ_Aux:");
+   SH1106_Send_Text(0, 40, "IRQ_UART:");
+   SH1106_Send_Text(0, 56, "LORA_STA:");
 
 #if defined(CC1101_TX)
    printf("CC1101 Tx\n");
@@ -82,13 +95,13 @@ int main(void)
    CC1101_Init(CC1101_RX_ADDRESS);
 #endif
 
-#ifdef defined(SI4432_TX) || defined(SI4432_RX)
+#if defined(SI4432_TX) || defined(SI4432_RX)
    printf("SI4432\n");
    SI4432_Init();
    SI4432_RxMode();
 #endif
 
-#ifdef defined(NRF24_TX) || defined(NRF24_RX)
+#if defined(NRF24_TX) || defined(NRF24_RX)
    printf("nRF24\n");
    nRF24_Init();
    NRF24_TxMode(address, 101);
@@ -136,8 +149,27 @@ int main(void)
 #endif
 
       // PWM_Update();
-      LL_GPIO_TogglePin(LED_Port, LED_Pin);
-      TS_Delay_ms(500);
+
+#if defined(LORA_E32_RX) || defined(LORA_E32_TX)
+      Lora_Main_Thread();
+#endif
+      if (TS_Get_ms() >= old_ts_ms + 500)
+      {
+         old_ts_ms = TS_Get_ms();
+         SH1106_Send_Text(60, 28, itoa(irq_aux_nr, (char *)irq_buff, 10));
+         SH1106_Send_Text(60, 40, itoa(irq_uart_nr, (char *)irq_buff, 10));
+#if defined(LORA_E32_RX) || defined(LORA_E32_TX)
+         SH1106_Send_Text(60, 56, itoa(Lora_Get_Machine_State(), (char *)irq_buff, 10));
+#ifdef LORA_E32_RX
+         SH1106_Send_Text(100, 28, "RX");
+         SH1106_Send_Text(100, 56, itoa(Lora_Get_Rx_Counter(), (char *)irq_buff, 10));
+#else
+         SH1106_Send_Text(100, 28, "TX");
+         SH1106_Send_Text(100, 56, itoa(Lora_Get_Tx_Counter(), (char *)irq_buff, 10));
+#endif
+#endif
+         LL_GPIO_TogglePin(LED_Port, LED_Pin);
+      }
    }
 }
 

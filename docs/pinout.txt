@@ -1,6 +1,6 @@
 A0                      B0  - Lora_AUX         C13 - Lora_M0
 A1                      B1  - Lora_M1
-A2  - UART_TX2          B2
+A2  - UART_TX2          B2  - BOOT1 (pin not used)
 A3  - UART_RX2          B3
 A4  - CS                B4
 A5  - SCK               B5

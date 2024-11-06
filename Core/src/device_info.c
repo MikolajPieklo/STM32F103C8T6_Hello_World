@@ -53,6 +53,7 @@
  ************************************/
 void Device_Info(void)
 {
+   printf("#########################################\n");
    uint16_t *u16_info = (uint16_t *)STM32_REG_FLASH_SIZE;
    printf("Flash size 0x%x\n", *u16_info);
    u16_info = (uint16_t *)STM32_REG_DEVICE_ID_1;

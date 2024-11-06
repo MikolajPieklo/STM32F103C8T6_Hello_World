@@ -1,14 +1,14 @@
 /**
  ********************************************************************************
- * @file    circual_buffer.h
+ * @file    lora_e32.h
  * @author  Mikolaj Pieklo
- * @date    15.12.2023
+ * @date    10.10.2024
  * @brief
  ********************************************************************************
  */
 
-#ifndef __CIRCUAL_BUFFER_H__
-#define __CIRCUAL_BUFFER_H__
+#ifndef __LORA_E32_H__
+#define __LORA_E32_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,24 +19,20 @@ extern "C" {
  ************************************/
 #include <stdint.h>
 
-#include <stm32f1xx_ll_usart.h>
-
 /************************************
  * MACROS AND DEFINES
  ************************************/
-#define CIRCUAL_BUFFER_SIZE 512
 
 /************************************
  * TYPEDEFS
  ************************************/
-typedef struct CirBuff_Typedef
+
+typedef enum Lora_Status_t
 {
-   uint32_t tail;
-   uint32_t head;
-   uint8_t data[CIRCUAL_BUFFER_SIZE];
-   uint32_t size;
-   USART_TypeDef *USARTx;
-} CirBuff_T;
+   Lora_Error = 0,
+   Lora_Success = 1,
+   Lora_Size
+} Lora_Status;
 
 /************************************
  * EXPORTED VARIABLES
@@ -45,9 +41,13 @@ typedef struct CirBuff_Typedef
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
-void CirBuff_Insert_Char(CirBuff_T *cb, uint8_t c);
+Lora_Status Lora_Main_Thread(void);
 
-void CirBuff_Insert_Text(CirBuff_T *cb, uint8_t *text, uint32_t len);
+uint32_t Lora_Get_Machine_State(void);
+
+uint32_t Lora_Get_Tx_Counter(void);
+
+uint32_t Lora_Get_Rx_Counter(void);
 
 #ifdef __cplusplus
 }

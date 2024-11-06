@@ -1,5 +1,5 @@
 # Author: M Pieklo
-# Date: 20.11.2022
+# Date: 06.11.2024
 # Project: STM32F103C8T6_HELLO_WORLD.
 # License: Opensource
 
@@ -10,6 +10,7 @@ include makefiles/makefile_clib.mk
 
 NAME := $(OUT_DIR)/TARGET
 DEVICE := STM32F103xB
+SW_FLAG := LORA_E32_TX
 MACH := cortex-m3
 FLOAT_ABI := soft
 MAP  := -Wl,-Map=$(NAME).map  # Create map file
@@ -24,6 +25,7 @@ CFLAGS := \
 	-std=gnu11 \
 	-O0 \
 	-D$(DEVICE) \
+	-D$(SW_FLAG) \
 	$(USE_NANO) \
 	-Wall \
 	-Wextra \
@@ -55,14 +57,25 @@ INC := \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
 	-IDrivers/CMSIS/Include/
 
-.PHONY: all clean doc load DIR ELF HEX restart reset
+.PHONY: check_flags all clean doc load DIR ELF HEX restart reset
 
-all: DIR ELF HEX
+all: check_flags DIR ELF HEX
 
 DIR:
-	@if [ ! -e $(OUT_DIR) ]; then mkdir $(OUT_DIR); fi
+	@if [ ! -e $(OUT_DIR) ]; then mkdir $(OUT_DIR); echo "$(CFLAGS)" > $(BUILD_FLAGS_FILE); fi
 	@if [ ! -e $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi
 	@if [ ! -e $(DRIVER_DIR) ]; then mkdir $(DRIVER_DIR); fi
+
+check_flags:
+	@if [ -e $(OUT_DIR) ]; then \
+		echo "$(CFLAGS)" > $(TEMP_BUILD_FLAGS_FILE); \
+		if [ ! -f $(BUILD_FLAGS_FILE) ] || ! cmp -s $(TEMP_BUILD_FLAGS_FILE) $(BUILD_FLAGS_FILE); then \
+			echo "BUILD FLAGS HAS BEEN CHANGED! REBUILD..."; \
+			rm -rf $(OUT_DIR); \
+		else \
+			rm -f $(TEMP_BUILD_FLAGS_FILE); \
+		fi \
+	fi
 
 SRC_CORE_DIR := Core/src
 SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
@@ -106,6 +119,7 @@ clean:
 
 load:
 	openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
+		-c "hla_serial 363B15157116303030303032" \
 		-f /usr/local/share/openocd/scripts/target/stm32f1x.cfg \
 		-c "program $(OUT_DIR)/target.elf verify reset exit"
 
@@ -123,3 +137,7 @@ doc:
 
 -include $(OBJ_CORE:.o=.d)
 -include $(OBJ_DRIVERS:.o=.d)
+
+#serial number st-link
+#53FF6C064965525327141187 - purple
+#363B15157116303030303032 - gold

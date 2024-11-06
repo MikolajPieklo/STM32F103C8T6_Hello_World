@@ -11,6 +11,7 @@
  * INCLUDES
  ************************************/
 #include <circual_buffer.h>
+
 #include <stdint.h>
 #include <string.h>
 /************************************
@@ -32,8 +33,6 @@
 /************************************
  * GLOBAL VARIABLES
  ************************************/
-volatile Circual_Buffer_T cbp = {0, 0};
-volatile uint8_t Circual_Buffer[CIRCUAL_BUFFER_SIZE];
 
 /************************************
  * STATIC FUNCTION PROTOTYPES
@@ -46,34 +45,40 @@ volatile uint8_t Circual_Buffer[CIRCUAL_BUFFER_SIZE];
 /************************************
  * GLOBAL FUNCTIONS
  ************************************/
-void Circual_Buffer_Insert_Char(uint8_t c)
+void CirBuff_Insert_Char(CirBuff_T *cb, uint8_t c)
 {
-   if (cbp.head > (CIRCUAL_BUFFER_SIZE - 1))
+   if (cb->head >= (CIRCUAL_BUFFER_SIZE - 1))
    {
-      cbp.head = 0;
+      cb->head = 0;
    }
-   Circual_Buffer[cbp.head] = c;
-   cbp.head++;
-   if (cbp.head == CIRCUAL_BUFFER_SIZE)
+   cb->data[cb->head] = c;
+   cb->head++;
+
+   if (USART1 == cb->USARTx)
    {
-      cbp.head = 0;
+      LL_USART_EnableIT_TC(cb->USARTx);
    }
 }
 
-void Circual_Buffer_Insert_Text(uint8_t *text, uint32_t len)
+void CirBuff_Insert_Text(CirBuff_T *cb, uint8_t *text, uint32_t len)
 {
-   if ((cbp.head + len) <= (CIRCUAL_BUFFER_SIZE - 1))
+   if ((cb->head + len) <= (CIRCUAL_BUFFER_SIZE - 1))
    {
-      memcpy(Circual_Buffer + cbp.head, text, len);
-      cbp.head += len;
-   } else if (cbp.head + len > (CIRCUAL_BUFFER_SIZE - 1))
+      memcpy(cb->data + cb->head, text, len);
+      cb->head += len;
+   } else if (cb->head + len > (CIRCUAL_BUFFER_SIZE - 1))
    {
-      uint32_t lenToEndLine = (CIRCUAL_BUFFER_SIZE - 1) - cbp.head;
-      memcpy(Circual_Buffer + cbp.head, text, lenToEndLine);
-      memcpy(Circual_Buffer, (text + lenToEndLine), (len - lenToEndLine));
-      cbp.head = (len - lenToEndLine);
+      uint32_t lenToEndBuff = CIRCUAL_BUFFER_SIZE - cb->head;
+      memcpy(cb->data + cb->head, text, lenToEndBuff);
+      memcpy(cb->data, (text + lenToEndBuff), (len - lenToEndBuff));
+      cb->head = (len - lenToEndBuff);
    } else
    {
       // do nothing
+   }
+
+   if (USART1 == cb->USARTx)
+   {
+      LL_USART_EnableIT_TC(cb->USARTx);
    }
 }

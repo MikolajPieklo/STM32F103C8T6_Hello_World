@@ -32,13 +32,13 @@
 
 #include <circual_buffer.h>
 #include <rtc.h>
-#include <stm32f1xx_ll_usart.h>
 #include <string.h>
 
 
 /* Variables */
 extern int __io_putchar(int ch) __attribute__((weak));
 extern int __io_getchar(void) __attribute__((weak));
+extern volatile CirBuff_T cb_uart1_tx;
 
 
 char *__env[1] = {0};
@@ -92,16 +92,10 @@ __attribute__((weak)) int _write(int file, char *ptr, int len)
    memset(tab, ' ', sizeof(tab));
 
    Get_RTC_Time(tab);
-   Circual_Buffer_Insert_Text(tab, sizeof(tab));
-   Circual_Buffer_Insert_Text(ptr, len);
+   CirBuff_Insert_Text(&cb_uart1_tx, tab, sizeof(tab));
+   CirBuff_Insert_Text(&cb_uart1_tx, ptr, len);
 
-   // for (DataIdx = 0; DataIdx < len; DataIdx++)
-   // {
-   //    Circual_Buffer_Insert_Char(*ptr++);
-   //    // LL_USART_TransmitData8(USART1, *ptr++);
-   //    // while(!LL_USART_IsActiveFlag_TC(USART1));
-   //    //__io_putchar(*ptr++);
-   // }
+   //__io_putchar(*ptr++);
    return len;
 }
 
@@ -110,7 +104,6 @@ int _close(int file)
    (void)file;
    return -1;
 }
-
 
 int _fstat(int file, struct stat *st)
 {
