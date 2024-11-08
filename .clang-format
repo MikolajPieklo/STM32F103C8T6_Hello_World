@@ -127,11 +127,11 @@ SortIncludes: true
 IncludeBlocks: Regroup
 SeparateDefinitionBlocks: Always
 IncludeCategories:
-    - Regex: '^"*.h*"'    # Lokalne nagłówki projektu, np. "my_project/my_header.h"
+    - Regex: '^"*.h*"'
       Priority: 1
-    - Regex: '^<std[^>]*>'           # Standardowe nagłówki C, np. <stdio.h>
+    - Regex: '^<std[^>]*>'
       Priority: 2
-    - Regex: '^<stm32[^>]*>'    # Lokalne nagłówki projektu, np. "my_project/my_header.h"
+    - Regex: '^<stm32[^>]*>'
       Priority: 3
-    - Regex: '.*'                  # Wszystkie pozostałe, które nie pasują do powyższych
+    - Regex: '.*'
       Priority: 4

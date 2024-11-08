@@ -8,3 +8,12 @@ How to unlock memory protection
 
 linkermap
    linkermap TARGET.map
+
+sudo apt install stlink-tools
+
+#######
+clang-tidy
+#######
+sudo apt install bear
+run: bear -- make
+run: clang-tidy Core/src/*.c

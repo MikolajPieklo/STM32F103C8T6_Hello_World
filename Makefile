@@ -15,7 +15,13 @@ MACH := cortex-m3
 FLOAT_ABI := soft
 MAP  := -Wl,-Map=$(NAME).map  # Create map file
 GC   := -Wl,--gc-sections     # Link for code size
-DEBUGINFO := -DDEBUG -g3
+DEBUGINFO :=
+OPTIMIZATION := 1
+ifneq ($(MAKECMDGOALS),release)
+$(info Added debug symbols)
+DEBUGINFO += -DDEBUG -g3
+OPTIMIZATION = 0
+endif
 
 CFLAGS := \
 	-c \
@@ -23,7 +29,7 @@ CFLAGS := \
 	-mthumb \
 	-mfloat-abi=$(FLOAT_ABI) \
 	-std=gnu11 \
-	-O0 \
+	-O$(OPTIMIZATION) \
 	-D$(DEVICE) \
 	-D$(SW_FLAG) \
 	$(USE_NANO) \
@@ -57,9 +63,11 @@ INC := \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
 	-IDrivers/CMSIS/Include/
 
-.PHONY: check_flags all clean doc load DIR ELF HEX restart reset
+.PHONY: check_flags all clean doc load DIR ELF HEX restart reset release
 
 all: check_flags DIR ELF HEX
+
+release : all
 
 DIR:
 	@if [ ! -e $(OUT_DIR) ]; then mkdir $(OUT_DIR); echo "$(CFLAGS)" > $(BUILD_FLAGS_FILE); fi
@@ -118,10 +126,7 @@ clean:
 	rm -rf $(OUT_DIR)
 
 load:
-	openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
-		-c "hla_serial 363B15157116303030303032" \
-		-f /usr/local/share/openocd/scripts/target/stm32f1x.cfg \
-		-c "program $(OUT_DIR)/target.elf verify reset exit"
+	./support/flash_stlink.sh
 
 restart:
 	openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
