@@ -10,7 +10,7 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <i2c.h>
+#include "i2c.h"
 
 #include <stm32f1xx_ll_bus.h>
 #include <stm32f1xx_ll_gpio.h>
@@ -24,10 +24,10 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-#define I2C2_SCL_PIN LL_GPIO_PIN_10
-#define I2C2_SDA_PIN LL_GPIO_PIN_11
+#define I2C2_SCL_PIN    LL_GPIO_PIN_10
+#define I2C2_SDA_PIN    LL_GPIO_PIN_11
 #define I2C2_SPEEDCLOCK 400000
-#define I2C2_DUTYCYCLE LL_I2C_DUTYCYCLE_2
+#define I2C2_DUTYCYCLE  LL_I2C_DUTYCYCLE_2
 
 /************************************
  * PRIVATE TYPEDEFS
@@ -54,7 +54,7 @@
  ************************************/
 I2c_Drv_Status_T I2C_Init(I2C_TypeDef *dev)
 {
-   I2c_Drv_Status_T status = I2C_DRV_STATUS_SUCCESS;
+   I2c_Drv_Status_T     status = I2C_DRV_STATUS_SUCCESS;
    LL_RCC_ClocksTypeDef rcc_clocks;
 
    do
@@ -167,7 +167,7 @@ bool I2C_Master_Reg16_Transmit_Byte(I2C_TypeDef *dev, uint8_t address, uint16_t 
 bool I2C_Master_Reg8_Transmit_Bytes(I2C_TypeDef *dev, uint8_t address, uint8_t reg, uint8_t *data,
                                     uint8_t len)
 {
-   bool status = true;
+   bool    status = true;
    uint8_t idx = 0;
 
    // start
@@ -210,7 +210,7 @@ bool I2C_Master_Reg8_Transmit_Bytes(I2C_TypeDef *dev, uint8_t address, uint8_t r
 bool I2C_Master_Reg16_Transmit_Bytes(I2C_TypeDef *dev, uint8_t address, uint16_t reg, uint8_t *data,
                                      uint8_t len)
 {
-   bool status = true;
+   bool    status = true;
    uint8_t idx = 0;
 
    // start
@@ -257,7 +257,7 @@ bool I2C_Master_Reg16_Transmit_Bytes(I2C_TypeDef *dev, uint8_t address, uint16_t
 bool I2C_Master_Reg8_Recessive_Bytes(I2C_TypeDef *dev, uint8_t address, uint8_t reg, uint8_t *data,
                                      uint8_t len)
 {
-   bool status = true;
+   bool    status = true;
    uint8_t idx = 0;
 
    LL_I2C_AcknowledgeNextData(dev, LL_I2C_ACK);
@@ -308,7 +308,8 @@ bool I2C_Master_Reg8_Recessive_Bytes(I2C_TypeDef *dev, uint8_t address, uint8_t 
       if (idx == len - 1)
       {
          LL_I2C_AcknowledgeNextData(dev, LL_I2C_NACK);
-      } else
+      }
+      else
       {
          LL_I2C_AcknowledgeNextData(dev, LL_I2C_ACK);
       }
@@ -331,7 +332,7 @@ bool I2C_Master_Reg8_Recessive_Bytes(I2C_TypeDef *dev, uint8_t address, uint8_t 
 bool I2C_Master_Reg16_Recessive_Bytes(I2C_TypeDef *dev, uint8_t address, uint16_t reg,
                                       uint8_t *data, uint8_t len)
 {
-   bool status = true;
+   bool    status = true;
    uint8_t idx = 0;
 
    LL_I2C_AcknowledgeNextData(dev, LL_I2C_ACK);
@@ -386,7 +387,8 @@ bool I2C_Master_Reg16_Recessive_Bytes(I2C_TypeDef *dev, uint8_t address, uint16_
       if (idx == len - 1)
       {
          LL_I2C_AcknowledgeNextData(dev, LL_I2C_NACK);
-      } else
+      }
+      else
       {
          LL_I2C_AcknowledgeNextData(dev, LL_I2C_ACK);
       }

@@ -25,18 +25,18 @@
 #define SI4432_R_GPIO0_CONFIGURATION                        0x0B
 #define SI4432_R_GPIO1_CONFIGURATION                        0x0C
 #define SI4432_R_GPIO2_CONFIGURATION                        0x0D
-#define SI4432_R_I/O_PORT_CONFIGURATION                     0x0E
+#define SI4432_R_I                                          / O_PORT_CONFIGURATION 0x0E
 #define SI4432_R_ADC_CONFIGURATION                          0x0F
 #define SI4432_R_ADC_SENSOR_AMPLIFIER_OFFSET                0x10
 #define SI4432_R_ADC_VALUE                                  0x11
 #define SI4432_R_TEMPERATURE_SENSOR_CONTROL                 0x12
 #define SI4432_R_TEMPERATURE_VALUE_OFFSET                   0x13
-#define SI4432_R_WAKE-UP_TIMER_PERIOD_1                     0x14
-#define SI4432_R_WAKE-UP_TIMER_PERIOD_2                     0x15
-#define SI4432_R_WAKE-UP_TIMER_PERIOD_3                     0x16
-#define SI4432_R_WAKE-UP_TIMER_VALUE_1                      0x17
-#define SI4432_R_WAKE-UP_TIMER_VALUE_2                      0x18
-#define SI4432_R_LOW-DUTY_CYCLE_MODE_DURATION               0x19
+#define SI4432_R_WAKE                                       -UP_TIMER_PERIOD_1 0x14
+#define SI4432_R_WAKE                                       -UP_TIMER_PERIOD_2 0x15
+#define SI4432_R_WAKE                                       -UP_TIMER_PERIOD_3 0x16
+#define SI4432_R_WAKE                                       -UP_TIMER_VALUE_1 0x17
+#define SI4432_R_WAKE                                       -UP_TIMER_VALUE_2 0x18
+#define SI4432_R_LOW                                        -DUTY_CYCLE_MODE_DURATION 0x19
 #define SI4432_R_LOW_BATTERY_DETECTOR_THRESHOLD             0x1A
 #define SI4432_R_BATTERY_VOLTAGE_LEVEL                      0x1B
 #define SI4432_R_IF_FILTER_BANDWIDTH                        0x1C
@@ -88,41 +88,41 @@
 #define SI4432_R_RECEIVED_PACKET_LENGTH                     0x4B
 #define SI4432_R_ADC8_CONTROL                               0x4F
 
-#define SI4432_R_ANALOG_TEST_BUS_SELECT                     0x50
-#define SI4432_R_DIGITAL_TEST_BUS_SELECT                    0x51
-#define SI4432_R_TX_RAMP_CONTROL                            0x52
-#define SI4432_R_PLL_TUNE_TIME                              0x53
-#define SI4432_R_CALIBRATION_CONTROL                        0x55
-#define SI4432_R_MODEM_TEST                                 0x56
-#define SI4432_R_CHARGE_PUMP_TEST                           0x57
-#define SI4432_R_CHARGE_PUMP_CURRENT_TRIMMING               0x58
-#define SI4432_R_DIVIDER_CURRENT_TRIMMING                   0x59
-#define SI4432_R_VCO_CURRENT_TRIMMING                       0x5A
-#define SI4432_R_VCO_CALIBRATION                            0x5B
-#define SI4432_R_SYNTHESIZER_TEST                           0x5C
-#define SI4432_R_BLOCK_ENABLE_OVERRIDE1                     0x5D
-#define SI4432_R_BLOCK_ENABLE_OVERRIDE2                     0x5E
-#define SI4432_R_BLOCK_ENABLE_OVERRIDE3                     0x5F
+#define SI4432_R_ANALOG_TEST_BUS_SELECT       0x50
+#define SI4432_R_DIGITAL_TEST_BUS_SELECT      0x51
+#define SI4432_R_TX_RAMP_CONTROL              0x52
+#define SI4432_R_PLL_TUNE_TIME                0x53
+#define SI4432_R_CALIBRATION_CONTROL          0x55
+#define SI4432_R_MODEM_TEST                   0x56
+#define SI4432_R_CHARGE_PUMP_TEST             0x57
+#define SI4432_R_CHARGE_PUMP_CURRENT_TRIMMING 0x58
+#define SI4432_R_DIVIDER_CURRENT_TRIMMING     0x59
+#define SI4432_R_VCO_CURRENT_TRIMMING         0x5A
+#define SI4432_R_VCO_CALIBRATION              0x5B
+#define SI4432_R_SYNTHESIZER_TEST             0x5C
+#define SI4432_R_BLOCK_ENABLE_OVERRIDE1       0x5D
+#define SI4432_R_BLOCK_ENABLE_OVERRIDE2       0x5E
+#define SI4432_R_BLOCK_ENABLE_OVERRIDE3       0x5F
 
-#define SI4432_R_CHANNEL_FILTER_COEFFICIENT_ADDRESS         0x60
-#define SI4432_R_CRYSTAL_OSCILLATOR/CONTROL_TEST            0x62
-#define SI4432_R_AGC_OVERRIDE_1                             0x69
-#define SI4432_R_TX_POWER                                   0x6D
-#define SI4432_R_TX_DATA_RATE_1                             0x6E
-#define SI4432_R_TX_DATA_RATE_0                             0x6F
-#define SI4432_R_MODULATION_MODE_CONTROL_1                  0x70
-#define SI4432_R_MODULATION_MODE_CONTROL_2                  0x71
-#define SI4432_R_FREQUENCY_DEVIATION                        0x72
-#define SI4432_R_FREQUENCY_OFFSET_1                         0x73
-#define SI4432_R_FREQUENCY_OFFSET_2                         0x74
-#define SI4432_R_FREQUENCY_BAND_SELECT                      0x75
-#define SI4432_R_NOMINAL_CARRIER_FREQUENCY_1                0x76
-#define SI4432_R_NOMINAL_CARRIER_FREQUENCY_0                0x77
-#define SI4432_R_FREQUENCY_HOPPING_CHANNEL_SELECT           0x79
-#define SI4432_R_FREQUENCY_HOPPING_STEP_SIZE                0x7A
-#define SI4432_R_TX_FIFO_CONTROL_1                          0x7C
-#define SI4432_R_TX_FIFO_CONTROL_2                          0x7D
-#define SI4432_R_RX_FIFO_CONTROL                            0x7E
-#define SI4432_R_FIFO_ACCESS                                0x7F
+#define SI4432_R_CHANNEL_FILTER_COEFFICIENT_ADDRESS 0x60
+#define SI4432_R_CRYSTAL_OSCILLATOR                 / CONTROL_TEST 0x62
+#define SI4432_R_AGC_OVERRIDE_1                     0x69
+#define SI4432_R_TX_POWER                           0x6D
+#define SI4432_R_TX_DATA_RATE_1                     0x6E
+#define SI4432_R_TX_DATA_RATE_0                     0x6F
+#define SI4432_R_MODULATION_MODE_CONTROL_1          0x70
+#define SI4432_R_MODULATION_MODE_CONTROL_2          0x71
+#define SI4432_R_FREQUENCY_DEVIATION                0x72
+#define SI4432_R_FREQUENCY_OFFSET_1                 0x73
+#define SI4432_R_FREQUENCY_OFFSET_2                 0x74
+#define SI4432_R_FREQUENCY_BAND_SELECT              0x75
+#define SI4432_R_NOMINAL_CARRIER_FREQUENCY_1        0x76
+#define SI4432_R_NOMINAL_CARRIER_FREQUENCY_0        0x77
+#define SI4432_R_FREQUENCY_HOPPING_CHANNEL_SELECT   0x79
+#define SI4432_R_FREQUENCY_HOPPING_STEP_SIZE        0x7A
+#define SI4432_R_TX_FIFO_CONTROL_1                  0x7C
+#define SI4432_R_TX_FIFO_CONTROL_2                  0x7D
+#define SI4432_R_RX_FIFO_CONTROL                    0x7E
+#define SI4432_R_FIFO_ACCESS                        0x7F
 
 #endif /* __SI4432_REG_H__ */

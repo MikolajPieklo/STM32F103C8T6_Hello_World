@@ -10,7 +10,7 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <device_info.h>
+#include "device_info.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -22,7 +22,7 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-#define STM32_REG_FLASH_SIZE 0x1FFFF7E0U
+#define STM32_REG_FLASH_SIZE  0x1FFFF7E0U
 #define STM32_REG_DEVICE_ID_1 0x1FFFF7E8U
 #define STM32_REG_DEVICE_ID_2 0x1FFFF7EAU
 #define STM32_REG_DEVICE_ID_3 0x1FFFF7ECU

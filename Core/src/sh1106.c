@@ -10,12 +10,11 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <sh1106.h>
+#include "sh1106.h"
 
 #include <delay.h>
 #include <fonts.h>
 #include <i2c.h>
-
 #include <string.h>
 
 /************************************

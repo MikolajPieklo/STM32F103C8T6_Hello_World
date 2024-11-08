@@ -10,21 +10,21 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <lora_e32.h>
-
-#include <circual_buffer.h>
-#include <crc16.h>
-#include <delay.h>
+#include "lora_e32.h"
 
 #include <stm32f1xx_ll_bus.h>
 #include <stm32f1xx_ll_exti.h>
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_usart.h>
+
+#include <circual_buffer.h>
+#include <crc16.h>
+#include <delay.h>
 /************************************
  * EXTERN VARIABLES
  ************************************/
-extern volatile uint32_t irq_aux_nr;
-extern volatile uint32_t irq_uart_nr;
+extern volatile uint32_t  irq_aux_nr;
+extern volatile uint32_t  irq_uart_nr;
 extern volatile CirBuff_T cb_uart1_tx;
 
 /************************************
@@ -35,18 +35,18 @@ extern volatile CirBuff_T cb_uart1_tx;
 #endif
 
 #define DELAY_TIME_AFTER_RESET_MS 3500
-#define DELAY_TX_TIME_MS 1000
+#define DELAY_TX_TIME_MS          1000
 
 #define LORA_RX_DEVICE_ADDRESS 0x0101
-#define LORA_RX_CHANEL 0x17
+#define LORA_RX_CHANEL         0x17
 #define LORA_TX_DEVICE_ADDRESS 0x0202
-#define LORA_TX_CHANEL 0x17
+#define LORA_TX_CHANEL         0x17
 
-#define LORA_GPIO_M0_PIN LL_GPIO_PIN_13
-#define LORA_GPIO_M0_PORT GPIOC
-#define LORA_GPIO_M1_PIN LL_GPIO_PIN_1
-#define LORA_GPIO_M1_PORT GPIOB
-#define LORA_GPIO_AUX_PIN LL_GPIO_PIN_0
+#define LORA_GPIO_M0_PIN   LL_GPIO_PIN_13
+#define LORA_GPIO_M0_PORT  GPIOC
+#define LORA_GPIO_M1_PIN   LL_GPIO_PIN_1
+#define LORA_GPIO_M1_PORT  GPIOB
+#define LORA_GPIO_AUX_PIN  LL_GPIO_PIN_0
 #define LORA_GPIO_AUX_PORT GPIOB
 
 /************************************
@@ -95,18 +95,18 @@ typedef struct Lora_Uart_Typedef
 {
    CirBuff_T buff_rx;
    CirBuff_T buff_tx;
-   uint8_t state;
+   uint8_t   state;
 } Lora_Uart_t;
 
 typedef struct Lora_Typedef
 {
-   uint32_t machine_state;
-   uint32_t aux_state;
-   uint32_t mode;
-   uint32_t por_time;
-   uint32_t tx_time;
-   uint32_t tx_counter;
-   uint32_t rx_counter;
+   uint32_t    machine_state;
+   uint32_t    aux_state;
+   uint32_t    mode;
+   uint32_t    por_time;
+   uint32_t    tx_time;
+   uint32_t    tx_counter;
+   uint32_t    rx_counter;
    Lora_Uart_t uart;
 
 } Lora_t;
@@ -155,7 +155,8 @@ void EXTI0_IRQHandler(void)
       if (SET == LL_GPIO_IsInputPinSet(LORA_GPIO_AUX_PORT, LORA_GPIO_AUX_PIN))
       {
          lora.aux_state = lora_aux_state_idle;
-      } else
+      }
+      else
       {
          lora.aux_state = lora_aux_state_busy;
       }
@@ -179,6 +180,7 @@ void USART2_IRQHandler(void)
    }
    irq_uart_nr++;
 }
+
 /************************************
  * STATIC FUNCTIONS
  ************************************/
@@ -225,7 +227,7 @@ static void lora_gpio_init(void)
 static void lora_uart_init(void)
 {
    LL_USART_InitTypeDef USART_InitStruct = {0};
-   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+   LL_GPIO_InitTypeDef  GPIO_InitStruct = {0};
 
    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2); /* Peripheral clock enable */
    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
@@ -415,6 +417,7 @@ static void lora_tx_test(void)
       }
    }
 }
+
 /************************************
  * GLOBAL FUNCTIONS
  ************************************/

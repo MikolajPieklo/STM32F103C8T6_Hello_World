@@ -37,8 +37,11 @@ BraceWrapping: {
     AfterStruct : 'true'
     AfterUnion : 'true'
     BeforeCatch : 'false'
-    BeforeElse : 'false'
+    BeforeElse : 'true'
     IndentBraces : 'false'
+    SplitEmptyFunction : 'true'
+    SplitEmptyRecord : 'false'
+    SplitEmptyNamespace : 'false'
 }
 
 AllowShortBlocksOnASingleLine: false # if (1) {return;}
@@ -81,9 +84,9 @@ AlignAfterOpenBracket: Align
 
 AlignConsecutiveAssignments: false
 
-AlignConsecutiveDeclarations: false
+AlignConsecutiveDeclarations: true
 
-AlignEscapedNewlinesLeft: false
+AlignEscapedNewlinesLeft: true
 
 AlignOperands: false
 
@@ -116,8 +119,19 @@ PointerAlignment: Right
 ReflowComments: true
 
 # --- Other
+InsertBraces: true
+
+AlignConsecutiveMacros : true
 
 SortIncludes: true
-ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-
-InsertBraces: true
+IncludeBlocks: Regroup
+SeparateDefinitionBlocks: Always
+IncludeCategories:
+    - Regex: '^"*.h*"'    # Lokalne nagłówki projektu, np. "my_project/my_header.h"
+      Priority: 1
+    - Regex: '^<std[^>]*>'           # Standardowe nagłówki C, np. <stdio.h>
+      Priority: 2
+    - Regex: '^<stm32[^>]*>'    # Lokalne nagłówki projektu, np. "my_project/my_header.h"
+      Priority: 3
+    - Regex: '.*'                  # Wszystkie pozostałe, które nie pasują do powyższych
+      Priority: 4

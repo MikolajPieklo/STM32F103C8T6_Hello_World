@@ -1,4 +1,10 @@
-#include <main.h>
+#include "main.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <stm32f1xx_ll_gpio.h>
+#include <stm32f1xx_ll_spi.h>
 
 #include <cc1101.h>
 #include <circual_buffer.h>
@@ -15,23 +21,17 @@
 #include <spi.h>
 #include <uart.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <stm32f1xx_ll_gpio.h>
-#include <stm32f1xx_ll_spi.h>
-
-#if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX)       \
+#if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX) \
     && !defined(NRF24_TX) && !defined(NRF24_RX) && !defined(LORA_E32_TX) && !defined(LORA_E32_RX)
 #error Please define hardware variant!
 #endif
 
 uint8_t address[] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
 
-volatile uint32_t irq_aux_nr = 0;
-volatile uint32_t irq_uart_nr = 0;
-uint8_t irq_buff[10];
-static uint32_t old_ts_ms = 0;
+volatile uint32_t  irq_aux_nr = 0;
+volatile uint32_t  irq_uart_nr = 0;
+uint8_t            irq_buff[10];
+static uint32_t    old_ts_ms = 0;
 volatile CirBuff_T cb_uart1_tx = {.tail = 0,
                                   .head = 0,
                                   .size = CIRCUAL_BUFFER_SIZE,
@@ -74,7 +74,8 @@ int main(void)
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
       printf("I2C OK\n");
-   } else
+   }
+   else
    {
       printf("I2C NOK\n");
    }

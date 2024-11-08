@@ -5,15 +5,18 @@
  *      Author: mkpk
  */
 
-#include <rtc.h>
+
+#include "rtc.h"
+
 #include <stdio.h>
-#include <string.h>
 
 #include <stm32f1xx_ll_bus.h>
 #include <stm32f1xx_ll_exti.h>
 #include <stm32f1xx_ll_pwr.h>
 #include <stm32f1xx_ll_rcc.h>
 #include <stm32f1xx_ll_rtc.h>
+
+#include <string.h>
 
 #define RTC_ERROR_NONE 0
 /* ck_apre=LSIFreq/(ASYNC prediv + 1) with LSIFreq=40kHz RC */
@@ -39,18 +42,18 @@ struct date_t RTC_DateStruct;
 uint8_t EndOfMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 /* Buffers used for displaying Time and Date */
 uint32_t timeCounter = 0;
-uint8_t dateUpdate = 0;
-uint8_t timeUpdate = 0;
-uint8_t aShowTime[13] = {0};
-uint8_t aShowDate[13] = {0};
+uint8_t  dateUpdate = 0;
+uint8_t  timeUpdate = 0;
+uint8_t  aShowTime[13] = {0};
+uint8_t  aShowDate[13] = {0};
 
-static void configure_rtc(void);
-static void configure_rtc_calendar(void);
-static void rtc_date_config(uint8_t fDate, uint8_t fMonth, uint8_t fYear);
-static void rtc_time_config(uint8_t fHour, uint8_t fMin, uint8_t fSec);
-static void rtc_time_structupadate(void);
-static void rtc_date_structupdate(void);
-static void calendar_callback(void);
+static void     configure_rtc(void);
+static void     configure_rtc_calendar(void);
+static void     rtc_date_config(uint8_t fDate, uint8_t fMonth, uint8_t fYear);
+static void     rtc_time_config(uint8_t fHour, uint8_t fMin, uint8_t fSec);
+static void     rtc_time_structupadate(void);
+static void     rtc_date_structupdate(void);
+static void     calendar_callback(void);
 static uint32_t waitforsynchro_rtc(void);
 
 void RTC_IRQHandler(void)
@@ -221,7 +224,6 @@ static void configure_rtc_calendar(void)
    LL_RTC_EnableWriteProtection(RTC);
 }
 
-
 /**
  * @brief  Configure RTC_DATE Structure
  * @param  fDate:  Date
@@ -288,11 +290,13 @@ static void rtc_date_structupdate(void)
          {
             RTC_DateStruct.month = 1U;
             RTC_DateStruct.year += 1U;
-         } else
+         }
+         else
          {
             RTC_DateStruct.month += 1U;
          }
-      } else
+      }
+      else
       {
          RTC_DateStruct.day = RTC_DateStruct.day + 1U;
       }

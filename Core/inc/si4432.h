@@ -7,11 +7,11 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef enum  RadioStatus
+typedef enum RadioStatus
 {
    RadioStatusError = 0,
    RadioStatusOk = 1
-}RadioStatus_t;
+} RadioStatus_t;
 
 RadioStatus_t SI4432_Init(void);
 

@@ -10,7 +10,7 @@
 /************************************
  * INCLUDES
  ************************************/
-#include <crc16.h>
+#include "crc16.h"
 
 /************************************
  * EXTERN VARIABLES
@@ -68,7 +68,7 @@ static const uint16_t crc16_table[] =
  ************************************/
 uint16_t CRC16_Calculate(const uint8_t *data, uint16_t length)
 {
-   uint8_t temp;
+   uint8_t  temp;
    uint16_t crc_result = 0xFFFF;
    while (length--)
    {

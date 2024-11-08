@@ -4,9 +4,7 @@
  *  Created on: Dec 18, 2022
  *      Author: mkpk
  */
-#include <uart.h>
-
-#include <circual_buffer.h>
+#include "uart.h"
 
 #include <stdint.h>
 
@@ -14,12 +12,14 @@
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_usart.h>
 
+#include <circual_buffer.h>
+
 extern volatile CirBuff_T cb_uart1_tx;
 
 void UART1_Init(void)
 {
    LL_USART_InitTypeDef USART_InitStruct = {0};
-   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+   LL_GPIO_InitTypeDef  GPIO_InitStruct = {0};
 
    /* Peripheral clock enable */
    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
@@ -65,6 +65,7 @@ void UART1_Init(void)
 void UART1_Tx(uint8_t *data, uint8_t n)
 {
 }
+
 void UART1_Rx(uint8_t *data, uint8_t n)
 {
 }
