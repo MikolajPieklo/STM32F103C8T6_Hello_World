@@ -23,10 +23,10 @@ B15                     B0  - Lora_AUX
 A8                      A7  - MOSI
 A9  - UART_TX1          A6  - MISO
 A10 - UART_RX1          A5  - SCK
-A11                     A4  - CS
+A11                     A4  - CS1 (CC11)
 A12                     A3  - UART_RX2
 A15                     A2  - UART_TX2
-B3                      A1
+B3                      A1  - CS2 (W25Q)
 B4                      A0
 B5                      RST
 B6  - GDO2              C13 - Lora_M0

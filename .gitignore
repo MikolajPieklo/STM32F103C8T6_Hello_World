@@ -4,6 +4,7 @@
 .vscode-ctags
 .vscode/
 out
+compile_commands.json
 
 # Prerequisites
 *.d

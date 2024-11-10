@@ -40,7 +40,8 @@ CFLAGS := \
 	-fstack-usage \
 	-MMD \
 	-Wfatal-errors \
-	-Werror=implicit
+	-Werror=implicit \
+	-fdiagnostics-color=always
 
 LDFLAGS := \
 	-mcpu=$(MACH) \
@@ -51,14 +52,21 @@ LDFLAGS := \
 	$(GC) \
 	-static \
 	$(USE_NANO) \
-	-Wl,--start-group -lc -lm -Wl,--end-group
+	-Wl,--start-group -lc -lm -Wl,--end-group \
+	-fdiagnostics-color=always
 
 CONST := -DUSE_FULL_LL_DRIVER -DHSE_VALUE=8000000 -DHSE_STARTUP_TIMEOUT=100 -DLSE_STARTUP_TIMEOUT=5000 \
 	-DLSE_VALUE=32768 -DHSI_VALUE=8000000 -DLSI_VALUE=40000 -DVDD_VALUE=3300 -DUSE_FULL_ASSERT -DPREFETCH_ENABLE=1 \
 	$(CC_COMMON_MACRO)
 
 INC := \
-	-ICore/inc/ \
+	-ICore/MAIN/inc/ \
+	-ICore/Flash/inc \
+	-ICore/CC1101/inc \
+	-ICore/Lora/inc \
+	-ICore/SH1106/inc \
+	-ICore/SI4432/inc \
+	-ICore/NRF24L01/inc \
 	-IDrivers/STM32F1xx_HAL_Driver/inc/ \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
 	-IDrivers/CMSIS/Include/
@@ -73,6 +81,9 @@ DIR:
 	@if [ ! -e $(OUT_DIR) ]; then mkdir $(OUT_DIR); echo "$(CFLAGS)" > $(BUILD_FLAGS_FILE); fi
 	@if [ ! -e $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi
 	@if [ ! -e $(DRIVER_DIR) ]; then mkdir $(DRIVER_DIR); fi
+	@$(foreach dir,$(SRC_CORE_DIR_WITHOUT_PREFIX), \
+		mkdir -p $(OBJ_DIR)/$(dir); \
+	)
 
 check_flags:
 	@if [ -e $(OUT_DIR) ]; then \
@@ -85,16 +96,18 @@ check_flags:
 		fi \
 	fi
 
-SRC_CORE_DIR := Core/src
+SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/CC1101/src Core/Lora/src Core/SH1106/src Core/SI4432/src \
+						Core/NRF24L01/src
+SRC_CORE_DIR_WITHOUT_PREFIX := $(foreach dir, $(SRC_CORE_DIRS), $(patsubst Core/%, %, $(dir)))
 SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
 
-SRC_CORE := $(wildcard $(SRC_CORE_DIR)/*.c)
+SRC_CORE := $(foreach dir, $(SRC_CORE_DIRS), $(wildcard $(dir)/*.c))
 SRC_DRIVERS := $(wildcard $(SRC_DRIVERS_DIR)/*.c)
 
-OBJ_CORE := $(SRC_CORE:$(SRC_CORE_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ_CORE := $(patsubst Core/%.c, $(OBJ_DIR)/%.o, $(SRC_CORE))
 OBJ_DRIVERS := $(SRC_DRIVERS:$(SRC_DRIVERS_DIR)/%.c=$(DRIVER_DIR)/%.o)
 
-$(OBJ_DIR)/%.o: $(SRC_CORE_DIR)/%.c
+$(OBJ_DIR)/%.o: Core/%.c
 	$(CC) $(CFLAGS) $(CONST) $(DEBUGINFO) $(INC) $< -o $@
 
 $(DRIVER_DIR)/%.o: $(SRC_DRIVERS_DIR)/%.c

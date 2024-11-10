@@ -6,6 +6,7 @@
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
 
+#include <WS25Q128.h>
 #include <cc1101.h>
 #include <circual_buffer.h>
 #include <delay.h>
@@ -71,6 +72,7 @@ int main(void)
    SPI_Init();
    RTC_Init();
    Device_Info();
+   WS25Q128_Init();
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
       printf("I2C OK\n");
