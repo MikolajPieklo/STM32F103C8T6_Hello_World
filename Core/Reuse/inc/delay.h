@@ -1,16 +1,43 @@
-/*
- * delay.h
- *
- *  Created on: Aug 17, 2021
- *      Author: mkpk
+/**
+ ********************************************************************************
+ * @file    Delay.h
+ * @author  Mikolaj Pieklo
+ * @date    12.11.2024
+ * @brief
+ ********************************************************************************
  */
 
-#ifndef GENERAL_INC_DELAY_H_
-#define GENERAL_INC_DELAY_H_
+#ifndef __DELAY_H__
+#define __DELAY_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/************************************
+ * INCLUDES
+ ************************************/
 #include "stdint.h"
+/************************************
+ * MACROS AND DEFINES
+ ************************************/
 
+/************************************
+ * TYPEDEFS
+ ************************************/
+
+/************************************
+ * EXPORTED VARIABLES
+ ************************************/
+
+/************************************
+ * GLOBAL FUNCTION PROTOTYPES
+ ************************************/
 void     TS_Delay_ms(uint32_t delay_ms);
 uint32_t TS_Get_ms(void);
 
-#endif /* GENERAL_INC_DELAY_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif
