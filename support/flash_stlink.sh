@@ -25,8 +25,7 @@ else
    done
 fi
 
-#
-# openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
-#         -c "hla_serial $serial" \
-#         -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg \
-#         -c "program out/target.elf verify reset exit"
+openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
+        -c "hla_serial $serial" \
+        -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg \
+        -c "program out/target.elf verify reset exit"

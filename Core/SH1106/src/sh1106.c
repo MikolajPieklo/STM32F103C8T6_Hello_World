@@ -105,7 +105,7 @@ static void sh1106_set_cursor(uint8_t x, uint8_t y)
          break;
       }
 
-      switch ((uint8_t)(y / 8))
+      switch ((uint8_t) (y / 8))
       {
       case 0:
          I2C_Master_Reg8_Transmit_Byte(I2C2, SH1106_ADDRESS, 0x00, 0xB0); // Start Page 0xBF
@@ -136,8 +136,8 @@ static void sh1106_set_cursor(uint8_t x, uint8_t y)
          break;
       }
 
-      uint8_t a = (uint8_t)(x / 16);
-      uint8_t b = (uint8_t)(x % 16);
+      uint8_t a = (uint8_t) (x / 16);
+      uint8_t b = (uint8_t) (x % 16);
 
       I2C_Master_Reg8_Transmit_Byte(I2C2, SH1106_ADDRESS, 0x00, b); // Column address LO max 0x0F
       I2C_Master_Reg8_Transmit_Byte(I2C2, SH1106_ADDRESS, 0x00,
@@ -209,7 +209,7 @@ void SH1106_Init(void)
 
 void SH1106_Send_Text(uint8_t x, uint8_t y, char *text)
 {
-   uint8_t size = strlen((const char *)text);
+   uint8_t size = strlen((const char *) text);
    uint8_t i = 0;
 
    for (i = 0; i < size; i++)

@@ -74,6 +74,8 @@ SpacesInParentheses: false
 
 SpacesInSquareBrackets: false
 
+SpaceAfterCStyleCast: true
+
 MaxEmptyLinesToKeep: 3
 
 # --- Breaks, alignment & reflow

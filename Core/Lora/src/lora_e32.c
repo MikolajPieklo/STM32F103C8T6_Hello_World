@@ -30,9 +30,7 @@ extern volatile CirBuff_T cb_uart1_tx;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-#if !defined(LORA_E32_RX) && !defined(LORA_E32_TX)
-#error Please define hardware variant!
-#endif
+#if defined(LORA_E32_RX) || defined(LORA_E32_TX)
 
 #define DELAY_TIME_AFTER_RESET_MS 3500
 #define DELAY_TX_TIME_MS          1000
@@ -171,8 +169,8 @@ void USART2_IRQHandler(void)
    if (LL_USART_IsActiveFlag_RXNE(USART2))
    {
       uint8_t temp = LL_USART_ReceiveData8(USART2);
-      CirBuff_Insert_Char((CirBuff_T *)&lora.uart.buff_rx, temp);
-      CirBuff_Insert_Char((CirBuff_T *)&cb_uart1_tx, temp);
+      CirBuff_Insert_Char((CirBuff_T *) &lora.uart.buff_rx, temp);
+      CirBuff_Insert_Char((CirBuff_T *) &cb_uart1_tx, temp);
    }
 
    if (LL_USART_IsActiveFlag_TXE(USART2))
@@ -310,15 +308,15 @@ static void lora_set_configuration(void)
    uint8_t i = 0;
 #ifdef LORA_E32_RX
    uint8_t data[] = {0xC2,
-                     (uint8_t)(LORA_RX_DEVICE_ADDRESS >> 8),
-                     (uint8_t)(LORA_RX_DEVICE_ADDRESS & 0xFF),
+                     (uint8_t) (LORA_RX_DEVICE_ADDRESS >> 8),
+                     (uint8_t) (LORA_RX_DEVICE_ADDRESS & 0xFF),
                      0x18,
                      LORA_RX_CHANEL,
                      0x44};
 #else
    uint8_t data[] = {0xC2,
-                     (uint8_t)(LORA_TX_DEVICE_ADDRESS >> 8),
-                     (uint8_t)(LORA_TX_DEVICE_ADDRESS & 0xFF),
+                     (uint8_t) (LORA_TX_DEVICE_ADDRESS >> 8),
+                     (uint8_t) (LORA_TX_DEVICE_ADDRESS & 0xFF),
                      0x18,
                      LORA_TX_CHANEL,
                      0x44};
@@ -454,7 +452,7 @@ Lora_Status Lora_Main_Thread(void)
 
       if (lora_uart_state_rx_busy == lora.uart.state)
       {
-         CirBuff_T *buff = (CirBuff_T *)&lora.uart.buff_rx;
+         CirBuff_T *buff = (CirBuff_T *) &lora.uart.buff_rx;
          if (buff->head - buff->tail == 4)
          {
             buff->tail += 4;
@@ -495,7 +493,7 @@ Lora_Status Lora_Main_Thread(void)
 
       if (lora_uart_state_rx_busy == lora.uart.state)
       {
-         CirBuff_T *buff = (CirBuff_T *)&lora.uart.buff_rx;
+         CirBuff_T *buff = (CirBuff_T *) &lora.uart.buff_rx;
          if (buff->head - buff->tail == 6)
          {
             buff->tail += 6;
@@ -551,3 +549,5 @@ uint32_t Lora_Get_Rx_Counter(void)
 {
    return lora.rx_counter;
 }
+
+#endif /* #if defined(LORA_E32_RX) || defined(LORA_E32_TX) */

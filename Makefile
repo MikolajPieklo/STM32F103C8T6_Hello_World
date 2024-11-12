@@ -67,6 +67,7 @@ INC := \
 	-ICore/SH1106/inc \
 	-ICore/SI4432/inc \
 	-ICore/NRF24L01/inc \
+	-ICore/Reuse/inc \
 	-IDrivers/STM32F1xx_HAL_Driver/inc/ \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
 	-IDrivers/CMSIS/Include/
@@ -97,7 +98,7 @@ check_flags:
 	fi
 
 SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/CC1101/src Core/Lora/src Core/SH1106/src Core/SI4432/src \
-						Core/NRF24L01/src
+						Core/NRF24L01/src Core/Reuse/src
 SRC_CORE_DIR_WITHOUT_PREFIX := $(foreach dir, $(SRC_CORE_DIRS), $(patsubst Core/%, %, $(dir)))
 SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
 

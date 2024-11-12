@@ -159,16 +159,16 @@ int main(void)
       if (TS_Get_ms() >= old_ts_ms + 500)
       {
          old_ts_ms = TS_Get_ms();
-         SH1106_Send_Text(60, 28, itoa(irq_aux_nr, (char *)irq_buff, 10));
-         SH1106_Send_Text(60, 40, itoa(irq_uart_nr, (char *)irq_buff, 10));
+         SH1106_Send_Text(60, 28, itoa(irq_aux_nr, (char *) irq_buff, 10));
+         SH1106_Send_Text(60, 40, itoa(irq_uart_nr, (char *) irq_buff, 10));
 #if defined(LORA_E32_RX) || defined(LORA_E32_TX)
-         SH1106_Send_Text(60, 56, itoa(Lora_Get_Machine_State(), (char *)irq_buff, 10));
+         SH1106_Send_Text(60, 56, itoa(Lora_Get_Machine_State(), (char *) irq_buff, 10));
 #ifdef LORA_E32_RX
          SH1106_Send_Text(100, 28, "RX");
-         SH1106_Send_Text(100, 56, itoa(Lora_Get_Rx_Counter(), (char *)irq_buff, 10));
+         SH1106_Send_Text(100, 56, itoa(Lora_Get_Rx_Counter(), (char *) irq_buff, 10));
 #else
          SH1106_Send_Text(100, 28, "TX");
-         SH1106_Send_Text(100, 56, itoa(Lora_Get_Tx_Counter(), (char *)irq_buff, 10));
+         SH1106_Send_Text(100, 56, itoa(Lora_Get_Tx_Counter(), (char *) irq_buff, 10));
 #endif
 #endif
          LL_GPIO_TogglePin(LED_Port, LED_Pin);

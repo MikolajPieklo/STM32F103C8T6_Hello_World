@@ -14,9 +14,18 @@ extern "C" {
 
 #include <stdint.h>
 
-void SPI_Init(void);
-void SPI_Tx8(uint8_t *data, uint8_t n);
-void SPI_Rx8(uint8_t *data, uint8_t n);
+#include <stm32f1xx_ll_gpio.h>
+#include <stm32f1xx_ll_spi.h>
+
+#define SPI1_CS1_Pin  LL_GPIO_PIN_4
+#define SPI1_CS2_Pin  LL_GPIO_PIN_1
+#define SPI1_SCK_Pin  LL_GPIO_PIN_5
+#define SPI1_MISO_Pin LL_GPIO_PIN_6
+#define SPI1_MOSI_Pin LL_GPIO_PIN_7
+
+void    SPI_Init(void);
+uint8_t SPI_Transfer(SPI_TypeDef *dev, uint32_t cs_pin, uint8_t *tx_data, uint8_t *rx_data,
+                     uint8_t n);
 
 #ifdef __cplusplus
 }
