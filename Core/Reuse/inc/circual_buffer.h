@@ -24,7 +24,7 @@ extern "C" {
 /************************************
  * MACROS AND DEFINES
  ************************************/
-#define CIRCUAL_BUFFER_SIZE 512
+#define CIRCUAL_BUFFER_SIZE 1024
 
 /************************************
  * TYPEDEFS

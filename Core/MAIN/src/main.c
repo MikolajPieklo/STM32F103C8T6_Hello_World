@@ -6,7 +6,7 @@
 #include <stm32f1xx_ll_gpio.h>
 #include <stm32f1xx_ll_spi.h>
 
-#include <WS25Q128.h>
+#include <WS25Qxx.h>
 #include <cc1101.h>
 #include <circual_buffer.h>
 #include <delay.h>
@@ -34,6 +34,11 @@ volatile uint32_t  irq_uart_nr = 0;
 uint8_t            irq_buff[10];
 static uint32_t    old_ts_ms = 0;
 volatile CirBuff_T cb_uart1_tx = {.tail = 0,
+                                  .head = 0,
+                                  .size = CIRCUAL_BUFFER_SIZE,
+                                  .USARTx = USART1};
+
+volatile CirBuff_T cb_uart1_rx = {.tail = 0,
                                   .head = 0,
                                   .size = CIRCUAL_BUFFER_SIZE,
                                   .USARTx = USART1};
@@ -72,7 +77,7 @@ int main(void)
    SPI_Init();
    RTC_Init();
    Device_Info();
-   WS25Q128_Init();
+   WS25Qxx_Init();
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
       printf("I2C OK\n");
@@ -172,6 +177,16 @@ int main(void)
 #endif
 #endif
          LL_GPIO_TogglePin(LED_Port, LED_Pin);
+      }
+
+      // Simple CMD
+      if (cb_uart1_rx.head != cb_uart1_rx.tail)
+      {
+         if (cb_uart1_rx.data[cb_uart1_rx.tail] == 0x00)
+         {
+            WS25Qxx_Erase_Chip();
+         }
+         cb_uart1_rx.tail++;
       }
    }
 }

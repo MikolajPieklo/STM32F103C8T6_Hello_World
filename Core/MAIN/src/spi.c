@@ -74,7 +74,7 @@ uint8_t SPI_Transfer(SPI_TypeDef *dev, uint32_t cs_pin, uint8_t *tx_data, uint8_
    for (i = 0; i < n; i++)
    {
       LL_SPI_TransmitData8(dev, *(tx_data + i));
-      while (!LL_SPI_IsActiveFlag_TXE(dev))
+      while (LL_SPI_IsActiveFlag_BSY(dev))
       {
       }
       if (NULL != rx_data)

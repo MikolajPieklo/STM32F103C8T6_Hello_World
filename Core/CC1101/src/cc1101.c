@@ -271,10 +271,10 @@ uint8_t CC1101_Tx_Debug(void)
    if (counter % 10 == 0)
    {
       uint8_t txdata[] = "   HelloWorld\0";
-      uint8_t len = strlen((char *)txdata);
+      uint8_t len = strlen((char *) txdata);
 
       printf("value[0]: %d\n", txdata[0]);
-      printf("size: %d\n", strlen((char *)txdata));
+      printf("size: %d\n", strlen((char *) txdata));
       txdata[0] = len;
       txdata[1] = CC1101_BR_ADDRESS;
       txdata[2] = CC1101_TX_ADDRESS;
@@ -449,13 +449,13 @@ float rf_set_carrier_frequency(float target_freq)
     * @return Actual configured frequency.
     */
    target_freq = target_freq * 1000000;
-   float    freqf = target_freq * 65536.0 / (float)CRYSTAL_FREQUENCY_M;
-   uint32_t freq = (uint32_t)freqf;
+   float    freqf = target_freq * 65536.0 / (float) CRYSTAL_FREQUENCY_M;
+   uint32_t freq = (uint32_t) freqf;
    freq = freq & 0x00FFFFFF;
    cc1101_write_reg(CC1101_R_FREQ0, freq);
    cc1101_write_reg(CC1101_R_FREQ1, (freq >> 8));
    cc1101_write_reg(CC1101_R_FREQ2, (freq >> 16));
-   float t = ((float)freq * (float)CRYSTAL_FREQUENCY_M) / 65536.0;
+   float t = ((float) freq * (float) CRYSTAL_FREQUENCY_M) / 65536.0;
 
    return t;
 }

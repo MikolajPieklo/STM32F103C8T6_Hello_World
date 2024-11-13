@@ -15,6 +15,7 @@
 #include <circual_buffer.h>
 
 extern volatile CirBuff_T cb_uart1_tx;
+extern volatile CirBuff_T cb_uart1_rx;
 
 void UART1_Init(void)
 {
@@ -74,6 +75,13 @@ void USART1_IRQHandler(void)
 {
    if (LL_USART_IsActiveFlag_RXNE(USART1))
    {
+
+      if (cb_uart1_rx.head == cb_uart1_rx.size)
+      {
+         cb_uart1_rx.head = 0;
+      }
+      cb_uart1_rx.data[cb_uart1_rx.head] = LL_USART_ReceiveData8(USART1);
+      cb_uart1_rx.head++;
    }
 
    if (LL_USART_IsActiveFlag_TXE(USART1))

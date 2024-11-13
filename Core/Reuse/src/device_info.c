@@ -53,15 +53,15 @@
  ************************************/
 void Device_Info(void)
 {
-   printf("#########################################\n");
-   uint16_t *u16_info = (uint16_t *)STM32_REG_FLASH_SIZE;
+   printf("#############################\n");
+   uint16_t *u16_info = (uint16_t *) STM32_REG_FLASH_SIZE;
    printf("Flash size 0x%x\n", *u16_info);
-   u16_info = (uint16_t *)STM32_REG_DEVICE_ID_1;
+   u16_info = (uint16_t *) STM32_REG_DEVICE_ID_1;
    printf("Device ID1 0x%x\n", *u16_info);
-   u16_info = (uint16_t *)STM32_REG_DEVICE_ID_2;
+   u16_info = (uint16_t *) STM32_REG_DEVICE_ID_2;
    printf("Device ID2 0x%x\n", *u16_info);
-   uint32_t *u32_info = (uint32_t *)STM32_REG_DEVICE_ID_3;
+   uint32_t *u32_info = (uint32_t *) STM32_REG_DEVICE_ID_3;
    printf("Device ID3 0x%lx\n", *u32_info);
-   u32_info = (uint32_t *)STM32_REG_DEVICE_ID_4;
+   u32_info = (uint32_t *) STM32_REG_DEVICE_ID_4;
    printf("Device ID4 0x%lx\n", *u32_info);
 }
