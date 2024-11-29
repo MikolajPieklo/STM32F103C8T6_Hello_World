@@ -13,6 +13,7 @@
 #include <device_info.h>
 #include <gpio.h>
 #include <i2c.h>
+#include <lcd12864.h>
 #include <lora_e32.h>
 #include <nrf.h>
 #include <pwm.h>
@@ -74,10 +75,12 @@ int main(void)
    MX_GPIO_Init();
    // PWM_Init();
    UART1_Init();
-   SPI_Init();
+   SPI1_Init();
+   SPI2_Init();
    RTC_Init();
    Device_Info();
    WS25Qxx_Init();
+   LCD12864_Init();
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
       printf("I2C OK\n");
@@ -177,6 +180,7 @@ int main(void)
 #endif
 #endif
          LL_GPIO_TogglePin(LED_Port, LED_Pin);
+         LCD12864_Set_Char();
       }
 
       // Simple CMD

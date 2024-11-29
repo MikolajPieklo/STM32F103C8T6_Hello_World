@@ -1,14 +1,14 @@
 /**
  ********************************************************************************
- * @file    spi.h
+ * @file    lcd12864.h
  * @author  Mikolaj Pieklo
- * @date    29.11.2024
+ * @date    20.11.2024
  * @brief
  ********************************************************************************
  */
 
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __LCD12864_H__
+#define __LCD12864_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,20 +17,10 @@ extern "C" {
 /************************************
  * INCLUDES
  ************************************/
-#include <stdint.h>
 
-#include <stm32f1xx_ll_gpio.h>
-#include <stm32f1xx_ll_spi.h>
 /************************************
  * MACROS AND DEFINES
  ************************************/
-#define SPI1_CS1_Pin  LL_GPIO_PIN_4
-#define SPI1_CS2_Pin  LL_GPIO_PIN_1
-#define SPI1_SCK_Pin  LL_GPIO_PIN_5
-#define SPI1_MISO_Pin LL_GPIO_PIN_6
-#define SPI1_MOSI_Pin LL_GPIO_PIN_7
-#define SPI2_SCK_Pin  LL_GPIO_PIN_13
-#define SPI2_MOSI_Pin LL_GPIO_PIN_15
 
 /************************************
  * TYPEDEFS
@@ -43,10 +33,9 @@ extern "C" {
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
-void    SPI1_Init(void);
-void    SPI2_Init(void);
-uint8_t SPI_Transfer(SPI_TypeDef *dev, uint32_t cs_pin, uint8_t *tx_data, uint8_t *rx_data,
-                     uint8_t n);
+void LCD12864_Init(void);
+
+void LCD12864_Set_Char(void);
 
 #ifdef __cplusplus
 }

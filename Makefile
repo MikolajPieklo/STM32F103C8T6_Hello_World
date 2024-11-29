@@ -10,7 +10,7 @@ include makefiles/makefile_clib.mk
 
 NAME := $(OUT_DIR)/TARGET
 DEVICE := STM32F103xB
-SW_FLAG := LORA_E32_TX
+SW_FLAG := LORA_E32_RX
 MACH := cortex-m3
 FLOAT_ABI := soft
 MAP  := -Wl,-Map=$(NAME).map  # Create map file
@@ -62,6 +62,7 @@ CONST := -DUSE_FULL_LL_DRIVER -DHSE_VALUE=8000000 -DHSE_STARTUP_TIMEOUT=100 -DLS
 INC := \
 	-ICore/MAIN/inc/ \
 	-ICore/Flash/inc \
+	-ICore/LCD12864/inc \
 	-ICore/CC1101/inc \
 	-ICore/Lora/inc \
 	-ICore/SH1106/inc \
@@ -97,8 +98,8 @@ check_flags:
 		fi \
 	fi
 
-SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/CC1101/src Core/Lora/src Core/SH1106/src Core/SI4432/src \
-						Core/NRF24L01/src Core/Reuse/src
+SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/LCD12864/src Core/CC1101/src Core/Lora/src Core/SH1106/src \
+					Core/SI4432/src Core/NRF24L01/src Core/Reuse/src
 SRC_CORE_DIR_WITHOUT_PREFIX := $(foreach dir, $(SRC_CORE_DIRS), $(patsubst Core/%, %, $(dir)))
 SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
 
