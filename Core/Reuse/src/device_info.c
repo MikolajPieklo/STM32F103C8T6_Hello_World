@@ -12,8 +12,12 @@
  ************************************/
 #include "device_info.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
+#include <stm32f1xx_ll_rcc.h>
+#include <stm32f1xx_ll_utils.h>
 
 /************************************
  * EXTERN VARIABLES
@@ -22,11 +26,6 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-#define STM32_REG_FLASH_SIZE  0x1FFFF7E0U
-#define STM32_REG_DEVICE_ID_1 0x1FFFF7E8U
-#define STM32_REG_DEVICE_ID_2 0x1FFFF7EAU
-#define STM32_REG_DEVICE_ID_3 0x1FFFF7ECU
-#define STM32_REG_DEVICE_ID_4 0x1FFFF7F0U
 
 /************************************
  * PRIVATE TYPEDEFS
@@ -43,10 +42,43 @@
 /************************************
  * STATIC FUNCTION PROTOTYPES
  ************************************/
+static void check_restart_issues(void);
 
 /************************************
  * STATIC FUNCTIONS
  ************************************/
+static void check_restart_issues(void)
+{
+   if (true == LL_RCC_IsActiveFlag_HSECSS())
+   {
+      printf("Reset cause: HSECSS\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_IWDGRST())
+   {
+      printf("Reset cause: IWDGRST\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_LPWRRST())
+   {
+      printf("Reset cause: LPWRRST\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_PINRST())
+   {
+      printf("Reset cause: PINRST\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_PORRST())
+   {
+      printf("Reset cause: PORRST\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_SFTRST())
+   {
+      printf("Reset cause: SFTRST\n");
+   }
+   if (true == LL_RCC_IsActiveFlag_WWDGRST())
+   {
+      printf("Reset cause: WWDGRST\n");
+   }
+   LL_RCC_ClearResetFlags();
+}
 
 /************************************
  * GLOBAL FUNCTIONS
@@ -54,14 +86,9 @@
 void Device_Info(void)
 {
    printf("#############################\n");
-   uint16_t *u16_info = (uint16_t *) STM32_REG_FLASH_SIZE;
-   printf("Flash size 0x%x\n", *u16_info);
-   u16_info = (uint16_t *) STM32_REG_DEVICE_ID_1;
-   printf("Device ID1 0x%x\n", *u16_info);
-   u16_info = (uint16_t *) STM32_REG_DEVICE_ID_2;
-   printf("Device ID2 0x%x\n", *u16_info);
-   uint32_t *u32_info = (uint32_t *) STM32_REG_DEVICE_ID_3;
-   printf("Device ID3 0x%lx\n", *u32_info);
-   u32_info = (uint32_t *) STM32_REG_DEVICE_ID_4;
-   printf("Device ID4 0x%lx\n", *u32_info);
+   check_restart_issues();
+   printf("Flash size: 0x%lx\n", LL_GetFlashSize());
+   printf("Device ID: 0x%lx 0x%lx 0x%lx\n", LL_GetUID_Word0(), LL_GetUID_Word1(),
+          LL_GetUID_Word2());
+   printf("#############################\n");
 }

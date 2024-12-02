@@ -12,6 +12,7 @@
 #include <delay.h>
 #include <device_info.h>
 #include <gpio.h>
+#include <hw_monitor.h>
 #include <i2c.h>
 #include <lcd12864.h>
 #include <lora_e32.h>
@@ -22,6 +23,7 @@
 #include <si4432.h>
 #include <spi.h>
 #include <uart.h>
+
 
 #if !defined(CC1101_TX) && !defined(CC1101_RX) && !defined(SI4432_TX) && !defined(SI4432_RX) \
     && !defined(NRF24_TX) && !defined(NRF24_RX) && !defined(LORA_E32_TX) && !defined(LORA_E32_RX)
@@ -72,6 +74,7 @@ int main(void)
    LL_SYSTICK_EnableIT();
 
    /* Initialize all configured peripherals */
+   HW_PVD_Start();
    MX_GPIO_Init();
    // PWM_Init();
    UART1_Init();
