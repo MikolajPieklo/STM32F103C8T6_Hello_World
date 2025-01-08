@@ -80,17 +80,18 @@ int main(void)
    UART1_Init();
    SPI1_Init();
    SPI2_Init();
+   TS_Delay_us_Init();
    RTC_Init();
    Device_Info();
-   WS25Qxx_Init();
+   // WS25Qxx_Init();
    LCD12864_Init();
    if (I2C_DRV_STATUS_SUCCESS == I2C_Init(I2C2))
    {
-      printf("I2C OK\n");
+      printf("I2C OK\r\n");
    }
    else
    {
-      printf("I2C NOK\n");
+      printf("I2C NOK\r\n");
    }
    SH1106_Init();
    SH1106_Send_Text(0, 0, "CPU LOAD: 12%");
@@ -100,23 +101,23 @@ int main(void)
    SH1106_Send_Text(0, 56, "LORA_STA:");
 
 #if defined(CC1101_TX)
-   printf("CC1101 Tx\n");
+   printf("CC1101 Tx\r\n");
    CC1101_Init(CC1101_TX_ADDRESS);
 #endif
 
 #if defined(CC1101_RX)
-   printf("CC1101 Rx\n");
+   printf("CC1101 Rx\r\n");
    CC1101_Init(CC1101_RX_ADDRESS);
 #endif
 
 #if defined(SI4432_TX) || defined(SI4432_RX)
-   printf("SI4432\n");
+   printf("SI4432\r\n");
    SI4432_Init();
    SI4432_RxMode();
 #endif
 
 #if defined(NRF24_TX) || defined(NRF24_RX)
-   printf("nRF24\n");
+   printf("nRF24\r\n");
    nRF24_Init();
    NRF24_TxMode(address, 101);
    NRF24_RxMode(address, 101);
@@ -183,7 +184,8 @@ int main(void)
 #endif
 #endif
          LL_GPIO_TogglePin(LED_Port, LED_Pin);
-         LCD12864_Set_Char();
+         // LCD12864_Graphic_Mode(true);
+         // LCD12864_Set_Char();
       }
 
       // Simple CMD

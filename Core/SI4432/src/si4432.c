@@ -98,9 +98,9 @@ static void si4432_start_adc(void)
    TS_Delay_ms(10);
    spi_read(SI4432_READ | SI4432_R_ADC_VALUE, &adc);
 
-   printf("ADC_VALUE: 0x%x\n", adc);
-   temp = (uint8_t)adc * 0.5 - 64;
-   printf("TEMP: %d\n", temp);
+   printf("ADC_VALUE: 0x%x\r\n", adc);
+   temp = (uint8_t) adc * 0.5 - 64;
+   printf("TEMP: %d\r\n", temp);
 }
 
 static void si4432_enable_lbd(void)
@@ -119,9 +119,9 @@ static void si4432_read_lbd(void)
 
    spi_read(SI4432_READ | SI4432_R_BATTERY_VOLTAGE_LEVEL, &adc);
 
-   printf("ADC_VALUE: 0x%x\n", adc);
+   printf("ADC_VALUE: 0x%x\r\n", adc);
    voltage = 1700 + (50 * adc);
-   printf("Voltage: %dmV\n", voltage);
+   printf("Voltage: %dmV\r\n", voltage);
 }
 
 RadioStatus_t SI4432_Init(void)
@@ -176,7 +176,7 @@ RadioStatus_t SI4432_Init(void)
          retval = RadioStatusError;
          break;
       }
-      printf("TYPE: 0x%x\n", data);
+      printf("TYPE: 0x%x\r\n", data);
 
       spi_read(SI4432_READ | SI4432_R_DEVICE_VERSION, &data);
       if (SI4432_VersionCode != data) // Check version code
@@ -184,7 +184,7 @@ RadioStatus_t SI4432_Init(void)
          retval = RadioStatusError;
          break;
       }
-      printf("VERSION: 0x%x\n", data);
+      printf("VERSION: 0x%x\r\n", data);
 
       // Carrier freq
       spi_write(SI4432_WRITE | SI4432_R_FREQUENCY_BAND_SELECT, 0x53);
@@ -271,19 +271,19 @@ RadioStatus_t SI4432_Init(void)
       spi_write(SI4432_WRITE | SI4432_R_INTERRUPT_ENABLE_2, 0x00);
 
       //      spi_read(SI4432_READ | SI4432_R_DEVICE_STATUS, &data);
-      //      printf ("DEVICE_STATUS: 0x%x\n", data);
+      //      printf ("DEVICE_STATUS: 0x%x\r\n", data);
       //
       //      spi_read(SI4432_READ | SI4432_R_INTERRUPT_STATUS_1, &data);
-      //      printf ("STATUS1: 0x%x\n", data);
+      //      printf ("STATUS1: 0x%x\r\n", data);
       //
       //      spi_read(SI4432_READ | SI4432_R_INTERRUPT_STATUS_2, &data);
-      //      printf ("STATUS2: 0x%x\n", data);
+      //      printf ("STATUS2: 0x%x\r\n", data);
       //
       //      spi_read(SI4432_READ | SI4432_R_TX_POWER, &data);
-      //      printf ("TX_POWER: 0x%x\n", data);
+      //      printf ("TX_POWER: 0x%x\r\n", data);
       //
       //      spi_read(SI4432_READ | SI4432_R_OPERATING_FUNCTION_CONTROL_1, &data);
-      //      printf ("OPERATING_FUNCTION_CONTROL_1: 0x%x\n", data);
+      //      printf ("OPERATING_FUNCTION_CONTROL_1: 0x%x\r\n", data);
       //
       //      si4432_configure_adc();
       //      si4432_start_adc();
@@ -297,11 +297,11 @@ RadioStatus_t SI4432_Init(void)
 
    if (retval == RadioStatusOk)
    {
-      printf("Radio status: OK\n");
+      printf("Radio status: OK\r\n");
    }
    else
    {
-      printf("Radio status: Error\n");
+      printf("Radio status: Error\r\n");
    }
 
    return retval;
@@ -348,15 +348,15 @@ void SI4432_Rx_Debug(void)
 
       irq = false;
       spi_read(SI4432_READ | SI4432_R_INTERRUPT_STATUS_1, &irq_status1);
-      printf("irq_status1 0x%x\n", irq_status1);
+      printf("irq_status1 0x%x\r\n", irq_status1);
       spi_read(SI4432_READ | SI4432_R_INTERRUPT_STATUS_2, &irq_status2);
-      printf("irq_status1 0x%x\n", irq_status2);
+      printf("irq_status1 0x%x\r\n", irq_status2);
 
       /*if Sync Word Received interrupt occurred*/
       if ((irq_status2 & SI4432_ENSWDET) == SI4432_ENSWDET)
       {
          spi_read(SI4432_READ | SI4432_R_RECEIVED_SIGNAL_STRENGTH_INDICATOR, &rssi);
-         printf("rssi 0x%x\n", rssi);
+         printf("rssi 0x%x\r\n", rssi);
       }
       /*if Valid Packet Received interrupt occurred*/
       if ((irq_status1 & SI4432_IPKVALID) == SI4432_IPKVALID)
@@ -365,12 +365,12 @@ void SI4432_Rx_Debug(void)
          spi_write(SI4432_WRITE | SI4432_R_OPERATING_FUNCTION_CONTROL_1, 0x01);
          // read the Received Packet Length register
          spi_read(SI4432_READ | SI4432_R_RECEIVED_PACKET_LENGTH, &length);
-         printf("length 0x%x\n", length);
+         printf("length 0x%x\r\n", length);
 
          for (i = 0; i < length; i++)
          {
             spi_read(SI4432_READ | SI4432_R_FIFO_ACCESS, &rxdata);
-            printf("%c\n", rxdata);
+            printf("%c\r\n", rxdata);
          }
       }
 

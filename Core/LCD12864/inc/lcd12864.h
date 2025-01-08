@@ -17,6 +17,8 @@ extern "C" {
 /************************************
  * INCLUDES
  ************************************/
+#include <stdbool.h>
+#include <stdint.h>
 
 /************************************
  * MACROS AND DEFINES
@@ -36,6 +38,12 @@ extern "C" {
 void LCD12864_Init(void);
 
 void LCD12864_Set_Char(void);
+
+void LCD12864_Graphic_Mode(bool enable);
+
+void LCD12864_Fill_Screen(void);
+
+void LCD12864_Clear_Screen(void);
 
 #ifdef __cplusplus
 }

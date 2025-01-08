@@ -20,7 +20,7 @@
 
 #define RTC_ERROR_NONE 0
 /* ck_apre=LSIFreq/(ASYNC prediv + 1) with LSIFreq=40kHz RC */
-#define RTC_ASYNCH_PREDIV ((uint32_t)0x9C3F)
+#define RTC_ASYNCH_PREDIV ((uint32_t) 0x9C3F)
 
 /* Time Structure definition */
 struct time_t
@@ -110,7 +110,7 @@ void Show_RTC_Calendar(void)
 
    /* Note: need to convert in decimal value in using __LL_RTC_CONVERT_BCD2BIN helper macro */
    /* Display time Format : hh:mm:ss */
-   sprintf((char *)aShowTime, "%.2d:%.2d:%.2d", RTC_TimeStruct.hour, RTC_TimeStruct.min,
+   sprintf((char *) aShowTime, "%.2d:%.2d:%.2d", RTC_TimeStruct.hour, RTC_TimeStruct.min,
            RTC_TimeStruct.sec);
    for (i = 0; i < sizeof(aShowTime); i++)
    {
@@ -120,10 +120,10 @@ void Show_RTC_Calendar(void)
       }
       printf("%c", aShowTime[i]);
    }
-   printf("\n");
+   printf("\r\n");
 
    /* Display date Format : mm-dd-yy */
-   sprintf((char *)aShowDate, "%.2d-%.2d-%.2d", RTC_DateStruct.day, RTC_DateStruct.month,
+   sprintf((char *) aShowDate, "%.2d-%.2d-%.2d", RTC_DateStruct.day, RTC_DateStruct.month,
            (2000 + RTC_DateStruct.year));
 }
 
@@ -135,7 +135,7 @@ void Get_RTC_Time(uint8_t *tab)
 
    /* Note: need to convert in decimal value in using __LL_RTC_CONVERT_BCD2BIN helper macro */
    /* Display time Format : hh:mm:ss */
-   sprintf((char *)aShowTime, "%.2d:%.2d:%.2d", RTC_TimeStruct.hour, RTC_TimeStruct.min,
+   sprintf((char *) aShowTime, "%.2d:%.2d:%.2d", RTC_TimeStruct.hour, RTC_TimeStruct.min,
            RTC_TimeStruct.sec);
    memcpy(tab, aShowTime, 8);
 }

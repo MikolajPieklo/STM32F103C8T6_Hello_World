@@ -63,6 +63,7 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
+    _stext = .;
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -74,6 +75,16 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
+  } >FLASH
+
+  .program_info_section :
+  {
+    . = ALIGN(4);
+    _sprogram_info_section = .;
+    *(.info_section)
+    *(.info_section*)
+    . = ALIGN(4);
+    _eprogram_info_section = .;
   } >FLASH
 
   /* Constant data into "FLASH" Rom type memory */

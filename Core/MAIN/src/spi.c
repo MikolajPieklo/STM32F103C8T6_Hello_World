@@ -114,9 +114,9 @@ void SPI2_Init(void)
    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI2);
 
    /* Configure SPI2 communication */
-   LL_SPI_SetBaudRatePrescaler(SPI2, LL_SPI_BAUDRATEPRESCALER_DIV64);
+   LL_SPI_SetBaudRatePrescaler(SPI2, LL_SPI_BAUDRATEPRESCALER_DIV16);
    LL_SPI_SetTransferDirection(SPI2, LL_SPI_FULL_DUPLEX);
-   LL_SPI_SetClockPhase(SPI2, LL_SPI_PHASE_1EDGE);
+   LL_SPI_SetClockPhase(SPI2, LL_SPI_PHASE_2EDGE);
    LL_SPI_SetClockPolarity(SPI2, LL_SPI_POLARITY_LOW);
    /* Reset value is LL_SPI_MSB_FIRST */
    LL_SPI_SetTransferBitOrder(SPI2, LL_SPI_MSB_FIRST);

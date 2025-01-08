@@ -182,11 +182,11 @@ void WS25Qxx_Init(void)
 
    if (WINDBOND_64M_ID == dev_id)
    {
-      printf("Flash: WINDBOND 64M\n");
+      printf("Flash: WINDBOND 64M\r\n");
    }
    else
    {
-      printf("Flash: Error initialization\n");
+      printf("Flash: Error initialization\r\n");
    }
 
    ws25qxx_write_status_register2(0x00);
@@ -194,6 +194,6 @@ void WS25Qxx_Init(void)
 
 void WS25Qxx_Erase_Chip(void)
 {
-   printf("Flash erase\n");
+   printf("Flash erase\r\n");
    ws25qxx_erase_chip();
 }

@@ -59,10 +59,10 @@ void CC1101_Init(uint8_t addr)
    TS_Delay_ms(100);
 
    rxdata = cc1101_read_reg(CC1101_R_PARTNUM);
-   printf("PARTNUM = 0x%x\n", rxdata);
+   printf("PARTNUM = 0x%x\r\n", rxdata);
 
    rxdata = cc1101_read_reg(CC1101_R_VERSION);
-   printf("VERSION = 0x%x\n", rxdata);
+   printf("VERSION = 0x%x\r\n", rxdata);
 
    CC1101_Check_State();
 
@@ -143,7 +143,7 @@ void CC1101_Reset(void)
    {
       counter++;
    }
-   printf("counter %ld\n", counter);
+   printf("counter %ld\r\n", counter);
 }
 
 /*
@@ -188,76 +188,76 @@ CC1101_Marc_State_T CC1101_Check_State(void)
       switch (data[1])
       {
       case CC1101_STATE_SLEEP:
-         printf("CC1101_MARCSTATE: SLEEP | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: SLEEP | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_IDLE:
-         printf("CC1101_MARCSTATE: IDLE | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: IDLE | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_XOFF:
-         printf("CC1101_MARCSTATE: XOFF | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: XOFF | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_VCOON_MC:
-         printf("CC1101_MARCSTATE: VCOON_MC | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: VCOON_MC | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_REGON_MC:
-         printf("CC1101_MARCSTATE: REGON_MC | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: REGON_MC | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_MANCAL:
-         printf("CC1101_MARCSTATE: MANCAL | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: MANCAL | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_VCOON:
-         printf("CC1101_MARCSTATE: VCOON | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: VCOON | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_REGON:
-         printf("CC1101_MARCSTATE: REGON | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: REGON | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_STARTCAL:
-         printf("CC1101_MARCSTATE: STARTCAL | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: STARTCAL | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_BWBOOST:
-         printf("CC1101_MARCSTATE: BWBOOST | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: BWBOOST | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_FS_LOCK:
-         printf("CC1101_MARCSTATE: FS_LOCK | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: FS_LOCK | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_IFADCON:
-         printf("CC1101_MARCSTATE: IFADCON | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: IFADCON | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_ENDCAL:
-         printf("CC1101_MARCSTATE: ENDCAL | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: ENDCAL | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_RX:
-         printf("CC1101_MARCSTATE: RX | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: RX | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_RX_END:
-         printf("CC1101_MARCSTATE: RX_END | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: RX_END | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_RX_RST:
-         printf("CC1101_MARCSTATE: RX_RST | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: RX_RST | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_TXRX_SWITCH:
-         printf("CC1101_MARCSTATE: TXRX_SWITCH | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: TXRX_SWITCH | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_RXFIFO_OVERFLOW:
-         printf("CC1101_MARCSTATE: RXFIFO_OVERFLOW | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: RXFIFO_OVERFLOW | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_FSTXON:
-         printf("CC1101_MARCSTATE: FSTXON | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: FSTXON | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_TX:
-         printf("CC1101_MARCSTATE: TX | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: TX | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_TX_END:
-         printf("CC1101_MARCSTATE: TX_END | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: TX_END | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_RXTX_SWITCH:
-         printf("CC1101_MARCSTATE: RXTX_SWITCH | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: RXTX_SWITCH | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       case CC1101_STATE_TXFIFO_UNDERFLOW:
-         printf("CC1101_MARCSTATE: TXFIFO_UNDERFLOW | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: TXFIFO_UNDERFLOW | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       default:
-         printf("CC1101_MARCSTATE: UNKNOW | STATUS BYTE = 0x%x\n", data[0]);
+         printf("CC1101_MARCSTATE: UNKNOW | STATUS BYTE = 0x%x\r\n", data[0]);
          break;
       }
    }
@@ -273,8 +273,8 @@ uint8_t CC1101_Tx_Debug(void)
       uint8_t txdata[] = "   HelloWorld\0";
       uint8_t len = strlen((char *) txdata);
 
-      printf("value[0]: %d\n", txdata[0]);
-      printf("size: %d\n", strlen((char *) txdata));
+      printf("value[0]: %d\r\n", txdata[0]);
+      printf("size: %d\r\n", strlen((char *) txdata));
       txdata[0] = len;
       txdata[1] = CC1101_BR_ADDRESS;
       txdata[2] = CC1101_TX_ADDRESS;
@@ -315,7 +315,7 @@ uint8_t CC1101_Rx_Debug(void)
 
    if (CC1101_STATE_RX_END == cc1101_read_reg(CC1101_R_MARCSTATE))
    {
-      printf("Message is recived\n");
+      printf("Message is recived\r\n");
    }
 
    GDO2_Pin = (LL_GPIO_ReadInputPort(GPIOB) & 0x40);
@@ -323,7 +323,7 @@ uint8_t CC1101_Rx_Debug(void)
    if (GDO2_Pin != 0)
    {
       bytes_in_rxfifo = cc1101_read_reg(CC1101_R_RXBYTES);
-      printf("Bytes in rxfifo 0x%x\n", bytes_in_rxfifo);
+      printf("Bytes in rxfifo 0x%x\r\n", bytes_in_rxfifo);
 
       cc1101_read_burst_reg(CC1101_R_RX_FIFO, rxFifo, bytes_in_rxfifo);
 
@@ -331,9 +331,9 @@ uint8_t CC1101_Rx_Debug(void)
       {
          printf("%x ", rxFifo[i]);
       }
-      printf("\n");
+      printf("\r\n");
 
-      printf("LQI: 0x%x RSSI: %d\n", cc1101_get_lqi(), cc1101_get_rssi());
+      printf("LQI: 0x%x RSSI: %d\r\n", cc1101_get_lqi(), cc1101_get_rssi());
 
       cc1101_strobe(CC1101_C_SRX);
       CC1101_Check_State();

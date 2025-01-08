@@ -34,6 +34,8 @@ extern "C" {
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
 void     TS_Delay_ms(uint32_t delay_ms);
+void     TS_Delay_us_Init(void);
+void     TS_Delay_us(uint32_t delay_us);
 uint32_t TS_Get_ms(void);
 
 #ifdef __cplusplus

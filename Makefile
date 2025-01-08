@@ -130,6 +130,8 @@ HEX:
 	@echo "$(ccblue)\nCreating bin file$(ccend)"
 	$(CC_OBJCOPY) -O binary  $(OUT_DIR)/target.elf  $(OUT_DIR)/target.bin
 
+	python support/elf_update.py "out/target.elf"
+
 	@echo "$(ccblue)\nGenerating list file$(ccend)"
 	$(CC_OBJDUMP) -h -S  $(OUT_DIR)/target.elf > $(OUT_DIR)/target.list
 
@@ -144,8 +146,8 @@ load:
 	./support/flash_stlink.sh
 
 restart:
-	openocd -f /usr/local/share/openocd/scripts/interface/st-link.cfg \
-		-f /usr/local/share/openocd/scripts/target/stm32f1x.cfg \
+	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+		-f /usr/share/openocd/scripts/target/stm32f1x.cfg \
 		-c "init" \
 		-c "reset" \
 		-c "exit"
