@@ -3,25 +3,23 @@
 # Project: STM32F103C8T6_HELLO_WORLD.
 # License: Opensource
 
-include makefiles/makefile_colors.mk
-include makefiles/makefile_info.mk
-include makefiles/makefile_dir.mk
-include makefiles/makefile_clib.mk
+include tools/makefiles/makefile_colors.mk
+include tools/makefiles/makefile_info.mk
+include tools/makefiles/makefile_dir.mk
+include tools/makefiles/makefile_clib.mk
+include tools/makefiles/makefile_common.mk
+
+SILENTMODE := yes
 
 NAME := $(OUT_DIR)/TARGET
+NAME_STARTUP_FILE := startup_stm32f103c8tx
+NAME_OPENOCD_CFG := stm32f1x
 DEVICE := STM32F103xB
 SW_FLAG := LORA_E32_RX
 MACH := cortex-m3
 FLOAT_ABI := soft
 MAP  := -Wl,-Map=$(NAME).map  # Create map file
 GC   := -Wl,--gc-sections     # Link for code size
-DEBUGINFO :=
-OPTIMIZATION := 1
-ifneq ($(MAKECMDGOALS),release)
-$(info Added debug symbols)
-DEBUGINFO += -DDEBUG -g3
-OPTIMIZATION = 0
-endif
 
 CFLAGS := \
 	-c \
@@ -47,7 +45,7 @@ LDFLAGS := \
 	-mcpu=$(MACH) \
 	-mthumb \
 	-mfloat-abi=$(FLOAT_ABI) \
-	-T"STM32F103C8TX_FLASH.ld" \
+	-T"tools/STM32F103C8TX_FLASH.ld" \
 	$(MAP) \
 	$(GC) \
 	-static \
@@ -73,93 +71,25 @@ INC := \
 	-IDrivers/CMSIS/Device/ST/STM32F1xx/Include/ \
 	-IDrivers/CMSIS/Include/
 
-.PHONY: check_flags all clean doc load DIR ELF HEX restart reset release
+SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/LCD12864/src Core/CC1101/src Core/Lora/src Core/SH1106/src \
+					Core/SI4432/src Core/NRF24L01/src Core/Reuse/src
+
+SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
+
+########################################################################################################################
+
+.PHONY: all release
 
 all: check_flags DIR ELF HEX
 
 release : all
 
-DIR:
-	@if [ ! -e $(OUT_DIR) ]; then mkdir $(OUT_DIR); echo "$(CFLAGS)" > $(BUILD_FLAGS_FILE); fi
-	@if [ ! -e $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi
-	@if [ ! -e $(DRIVER_DIR) ]; then mkdir $(DRIVER_DIR); fi
-	@$(foreach dir,$(SRC_CORE_DIR_WITHOUT_PREFIX), \
-		mkdir -p $(OBJ_DIR)/$(dir); \
-	)
+include tools/makefiles/makefile_dependencies.mk
 
-check_flags:
-	@if [ -e $(OUT_DIR) ]; then \
-		echo "$(CFLAGS)" > $(TEMP_BUILD_FLAGS_FILE); \
-		if [ ! -f $(BUILD_FLAGS_FILE) ] || ! cmp -s $(TEMP_BUILD_FLAGS_FILE) $(BUILD_FLAGS_FILE); then \
-			echo "BUILD FLAGS HAS BEEN CHANGED! REBUILD..."; \
-			rm -rf $(OUT_DIR); \
-		else \
-			rm -f $(TEMP_BUILD_FLAGS_FILE); \
-		fi \
-	fi
-
-SRC_CORE_DIRS := Core/MAIN/src Core/Flash/src Core/LCD12864/src Core/CC1101/src Core/Lora/src Core/SH1106/src \
-					Core/SI4432/src Core/NRF24L01/src Core/Reuse/src
-SRC_CORE_DIR_WITHOUT_PREFIX := $(foreach dir, $(SRC_CORE_DIRS), $(patsubst Core/%, %, $(dir)))
-SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
-
-SRC_CORE := $(foreach dir, $(SRC_CORE_DIRS), $(wildcard $(dir)/*.c))
-SRC_DRIVERS := $(wildcard $(SRC_DRIVERS_DIR)/*.c)
-
-OBJ_CORE := $(patsubst Core/%.c, $(OBJ_DIR)/%.o, $(SRC_CORE))
-OBJ_DRIVERS := $(SRC_DRIVERS:$(SRC_DRIVERS_DIR)/%.c=$(DRIVER_DIR)/%.o)
-
-$(OBJ_DIR)/%.o: Core/%.c
-	$(CC) $(CFLAGS) $(CONST) $(DEBUGINFO) $(INC) $< -o $@
-
-$(DRIVER_DIR)/%.o: $(SRC_DRIVERS_DIR)/%.c
-	$(CC) $(CFLAGS) $(CONST) $(DEBUGINFO) $(INC) $< -o $@
-
-# $^ dependency $@ target
-$(OBJ_DIR)/startup_stm32f103c8tx.o: Core/Startup/startup_stm32f103c8tx.s
-	$(CC) $(CFLAGS) $(CONST) $(DEBUGINFO) -o $@ $^
-
-ELF: $(OBJ_DIR)/startup_stm32f103c8tx.o $(OBJ_CORE) $(OBJ_DRIVERS)
-	@echo "$(ccblue)\nLinking$(ccend)"
-	$(CC) $(LDFLAGS) $^ -o $(OUT_DIR)/target.elf
-
-HEX:
-	@echo "$(ccblue)\nCreating hex file$(ccend)"
-	$(CC_OBJCOPY) -O ihex $(OUT_DIR)/target.elf $(OUT_DIR)/target.hex
-
-	@echo "$(ccblue)\nCreating bin file$(ccend)"
-	$(CC_OBJCOPY) -O binary  $(OUT_DIR)/target.elf  $(OUT_DIR)/target.bin
-
-	python support/elf_update.py "out/target.elf"
-
-	@echo "$(ccblue)\nGenerating list file$(ccend)"
-	$(CC_OBJDUMP) -h -S  $(OUT_DIR)/target.elf > $(OUT_DIR)/target.list
-
-	@echo "$(ccpurple)"
-	arm-none-eabi-size $(OUT_DIR)/target.elf -A -x
-	@echo "$(ccend)"
-
-clean:
-	rm -rf $(OUT_DIR)
-
-load:
-	./support/flash_stlink.sh
-
-restart:
-	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
-		-f /usr/share/openocd/scripts/target/stm32f1x.cfg \
-		-c "init" \
-		-c "reset" \
-		-c "exit"
-
-reset: restart
-
-doc:
-	doxygen
-
--include $(OBJ_CORE:.o=.d)
--include $(OBJ_DRIVERS:.o=.d)
-
-#serial number st-link
-#53FF6C064965525327141187 - purple
-#363B15157116303030303032 - gold
+include tools/makefiles/target_check_flags.mk
+include tools/makefiles/target_chip.mk
+include tools/makefiles/target_clean.mk
+include tools/makefiles/target_dir.mk
+include tools/makefiles/target_doc.mk
+include tools/makefiles/target_elf.mk
+include tools/makefiles/target_hex.mk
