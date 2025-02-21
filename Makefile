@@ -10,9 +10,12 @@ include tools/makefiles/makefile_clib.mk
 include tools/makefiles/makefile_common.mk
 
 SILENTMODE := yes
+USE_FREERTOS := no
+FREERTOS_HEAP := heap_1
 
 NAME := $(OUT_DIR)/TARGET
 NAME_STARTUP_FILE := startup_stm32f103c8tx
+NAME_LINKER_SCRIPT := STM32F103C8TX_FLASH
 NAME_OPENOCD_CFG := stm32f1x
 DEVICE := STM32F103xB
 SW_FLAG := LORA_E32_RX
@@ -21,41 +24,7 @@ FLOAT_ABI := soft
 MAP  := -Wl,-Map=$(NAME).map  # Create map file
 GC   := -Wl,--gc-sections     # Link for code size
 
-CFLAGS := \
-	-c \
-	-mcpu=$(MACH) \
-	-mthumb \
-	-mfloat-abi=$(FLOAT_ABI) \
-	-std=gnu11 \
-	-O$(OPTIMIZATION) \
-	-D$(DEVICE) \
-	-D$(SW_FLAG) \
-	$(USE_NANO) \
-	-Wall \
-	-Wextra \
-	-ffunction-sections \
-	-fdata-sections \
-	-fstack-usage \
-	-MMD \
-	-Wfatal-errors \
-	-Werror=implicit \
-	-fdiagnostics-color=always
-
-LDFLAGS := \
-	-mcpu=$(MACH) \
-	-mthumb \
-	-mfloat-abi=$(FLOAT_ABI) \
-	-T"tools/STM32F103C8TX_FLASH.ld" \
-	$(MAP) \
-	$(GC) \
-	-static \
-	$(USE_NANO) \
-	-Wl,--start-group -lc -lm -Wl,--end-group \
-	-fdiagnostics-color=always
-
-CONST := -DUSE_FULL_LL_DRIVER -DHSE_VALUE=8000000 -DHSE_STARTUP_TIMEOUT=100 -DLSE_STARTUP_TIMEOUT=5000 \
-	-DLSE_VALUE=32768 -DHSI_VALUE=8000000 -DLSI_VALUE=40000 -DVDD_VALUE=3300 -DUSE_FULL_ASSERT -DPREFETCH_ENABLE=1 \
-	$(CC_COMMON_MACRO)
+include tools/makefiles/makefile_flags.mk
 
 INC := \
 	-ICore/MAIN/inc/ \
