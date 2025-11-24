@@ -1,8 +1,8 @@
 # Author: M Pieklo
-# Date: 09.11.2025
+# Date: 24.11.2025
 # Project: STM32F103C8T6_HELLO_WORLD.
 # License: Opensource
-# Version: 1.0.1
+# Version: 1.0.2
 
 include tools/makefiles/makefile_colors.mk
 include tools/makefiles/makefile_info.mk
@@ -17,6 +17,7 @@ FREERTOS_HEAP := heap_1
 
 NAME := $(OUT_DIR)/APP
 NAME_STARTUP_FILE := startup_stm32f103c8tx
+NAME_SBL_STARTUP_FILE := sbl_startup_stm32f103c8tx
 NAME_APP_LINKER_SCRIPT := STM32F103C8TX_FLASH_APP
 NAME_SBL_LINKER_SCRIPT := STM32F103C8TX_FLASH_SBL
 SBL_SIZE_KB := 8
@@ -40,7 +41,9 @@ INC := \
 	-Itools/Reuse/NRF24L01/inc/ \
 	-Itools/Reuse/SH1106/inc/ \
 	-Itools/Reuse/SI4432/inc/ \
-	-Itools/Reuse/WS25Qxx/inc/
+	-Itools/Reuse/WS25Qxx/inc/ \
+	-Itools/freertos/include/ \
+	-Itools/freertos/portable/GCC/ARM_CM4F/
 
 SRC_CORE_DIRS := Core/MAIN/src
 SRC_DRIVERS_DIR := Drivers/STM32F1xx_HAL_Driver/src
