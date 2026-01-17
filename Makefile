@@ -11,7 +11,7 @@ include tools/makefiles/makefile_clib.mk
 include tools/makefiles/makefile_common.mk
 
 SILENTMODE := yes
-USE_SBL := no
+USE_SBL := yes
 USE_FREERTOS := no
 FREERTOS_HEAP := heap_1
 
@@ -20,7 +20,7 @@ NAME_STARTUP_FILE := startup_stm32f103c8tx
 NAME_SBL_STARTUP_FILE := sbl_startup_stm32f103c8tx
 NAME_APP_LINKER_SCRIPT := STM32F103C8TX_FLASH_APP
 NAME_SBL_LINKER_SCRIPT := STM32F103C8TX_FLASH_SBL
-SBL_SIZE_KB := 8
+SBL_SIZE_KB := 16
 NAME_OPENOCD_CFG := stm32f1x
 DEVICE := STM32F103xB
 SW_FLAG := LORA_E32_RX
